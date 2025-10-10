@@ -16,7 +16,8 @@ export default function HomeScreen() {
         imageStyle={{ resizeMode: "cover" }}
       >
         <View style={styles.overlay}>
-          <Text style={styles.title}>Welcome</Text>
+          <Text style={styles.title}>Welcome to APP-NAME</Text>
+          <Text style={styles.title}>Select Location</Text>
 
           <TextInput
             style={styles.searchBar}
