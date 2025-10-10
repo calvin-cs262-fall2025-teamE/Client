@@ -111,7 +111,6 @@ export default function RVD() {
           </TouchableOpacity>
         <View style={{ flex: 1 }} />
           <Text style={styles.headerText}>Recent Questions</Text>
-          
         </View>
 
         {/* Horizontal Avatars
