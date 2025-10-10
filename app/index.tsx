@@ -16,7 +16,8 @@ export default function HomeScreen() {
         imageStyle={{ resizeMode: "cover" }}
       >
         <View style={styles.overlay}>
-          <Text style={styles.title}>Welcome</Text>
+          <Text style={styles.title}>Welcome to APP-NAME</Text>
+          <Text style={styles.title}>Select Location</Text>
 
           <TextInput
             style={styles.searchBar}
@@ -48,15 +49,17 @@ const styles = StyleSheet.create({
     flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
   },
   overlay: {
     backgroundColor: "rgba(0,0,0,0.5)",
     padding: 20,
+    
     borderRadius: 10,
     width: "80%",
     alignItems: "center",
+    margin: 50,
   },
   title: {
     fontSize: 28,

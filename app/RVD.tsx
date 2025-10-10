@@ -38,35 +38,35 @@ const POSTS = [
     id: "1",
     user: USERS[0],
     time: "2m",
-    text: "Just started a new React Native project! 🚀",
+    text: "When are the RVD Bible studies this year?",
     image: null,
   },
   {
     id: "2",
     user: USERS[1],
     time: "5m",
-    text: "Check out this beautiful sunset!",
+    text: "Can I use the kitchens on other floors?",
     image: require("../assets/images/android-icon-background.png"),
   },
   {
     id: "3",
     user: USERS[2],
     time: "10m",
-    text: "Dogs make everything better 🐶",
+    text: "Is there a piano in the building?",
     image: require("../assets/images/android-icon-foreground.png"),
   },
   {
     id: "4",
     user: USERS[3],
     time: "15m",
-    text: "Nature walks are the best therapy.",
+    text: "Why was there a tornado siren last Friday?",
     image: require("../assets/images/splash-icon.png"),
   },
   {
     id: "5",
     user: USERS[4],
     time: "20m",
-    text: "Working on a cool new app idea!",
+    text: "Which floor had the best halloween decoration last year?",
     image: null,
   },
 ];
@@ -93,23 +93,27 @@ function Icon({ name, size = 22, color = "#555" }: IconProps) {
   );
 }
 
+// I hope to embody the following philosophy with the layout:
+// This is help forum, not social media
+// Therefore, we don't want features that highlight individual people
+// so NO profile personal feed and features like reposting
+// However, we can use a more social-media astetic at times, for appeal
+// - Caleb
 export default function RVD() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         {/* Top Navigation Bar */}
         <View style={styles.headerRow}>
+          <Text style={styles.headerText}>Sort Unanswered</Text>
           <TouchableOpacity>
             <Icon name="menu" size={26} color="#222" />
           </TouchableOpacity>
-          <Image source={require("../assets/images/react-logo.png")} style={styles.logo} resizeMode="contain" />
-          <View style={{ flex: 1 }} />
-          <TouchableOpacity>
-            <Icon name="sparkle" size={24} color="#1da1f2" />
-          </TouchableOpacity>
+        <View style={{ flex: 1 }} />
+          <Text style={styles.headerText}>Recent Questions</Text>
         </View>
 
-        {/* Horizontal Avatars */}
+        {/* Horizontal Avatars
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.storiesScroll} contentContainerStyle={styles.storiesContainer}>
           <View style={styles.storyAvatarWrapper}>
             <View style={[styles.storyAvatar, styles.addAvatar]}>
@@ -123,9 +127,9 @@ export default function RVD() {
               <Text style={styles.storyName}>{user.name.split(" ")[0]}</Text>
             </View>
           ))}
-        </ScrollView>
+        </ScrollView> */}
 
-        {/* Feed */}
+        {/* Posts List */}
         <FlatList
           data={POSTS}
           keyExtractor={item => item.id}
@@ -145,9 +149,9 @@ export default function RVD() {
                 )}
                 <View style={styles.postActions}>
                   <TouchableOpacity style={styles.actionBtn}><Icon name="reply" size={20} color="#555" /></TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="retweet" size={20} color="#17bf63" /></TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="like" size={20} color="#e0245e" /></TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="share" size={20} color="#1da1f2" /></TouchableOpacity>
+                  <Text>5</Text>
+                  <TouchableOpacity style={styles.actionBtn}><Icon name="like" size={20} color="#e0245e" /></TouchableOpacity>                
+                  <Text>8</Text>
                 </View>
               </View>
             </View>
@@ -182,6 +186,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e6ecf0',
     backgroundColor: '#fff',
+  },
+  headerText: {
+    fontSize: 18,
+    color: '#222',
+    marginBottom: 4,
+    marginTop: 2,
   },
   logo: {
     width: 32,
