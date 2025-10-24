@@ -11,7 +11,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
-        source={require("../assets/images/calvin-bg.jpg")}
+        source={require("../../assets/images/calvin-bg.jpg")}
         style={styles.background}
         imageStyle={{ resizeMode: "cover" }}
       >
