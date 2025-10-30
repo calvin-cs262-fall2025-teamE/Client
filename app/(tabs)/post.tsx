@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface buttonProps {
@@ -10,7 +11,8 @@ interface buttonProps {
 const CustomRadioButton = (props: buttonProps) => (
   <TouchableOpacity
     style={[
-      { backgroundColor: props.selected ? '#007BFF' : '#FFF' } // Change background color based on selection
+      { backgroundColor: props.selected ? '#007BFF' : '#FFF' }, // Change background color based on selection
+      styles.type_button
     ]}
     onPress= {() => props.onSelect()} // Trigger onSelect callback when pressed
   >
@@ -25,39 +27,45 @@ const CustomRadioButton = (props: buttonProps) => (
 );
 
 export default function AboutScreen() {
-  let currentSelected: number = 0;
+  const [currentSelected, setCurrentSelected] = useState(0);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Create Post Here</Text>
+      <Text style={styles.title}>Create Post Here</Text>
       
-      {/* TODO: Add question/info selector */}
-      <View>
+      <View style={styles.button_container}>
         <CustomRadioButton
           label='Question'
           selected={currentSelected === 0}
-          onSelect={() => currentSelected = 0}
+          onSelect={() => setCurrentSelected(0)}
         />
         <CustomRadioButton
           label='Advice'
           selected={currentSelected === 1}
-          onSelect={() => currentSelected = 1}
+          onSelect={() => setCurrentSelected(1)}
         />
       </View>
       
-      <Text>Your {currentSelected === 0 ? 'Question' : 'Advice'}</Text>
-      <TextInput
-        placeholder={currentSelected === 0 ? 'What is your question?' : 'What is your advice?'}
-      />
+      <View style={styles.container}>
+        <Text>Your {currentSelected === 0 ? 'Question' : 'Advice'}</Text>
+        <TextInput
+          placeholder={currentSelected === 0 ? 'What is your question?' : 'What is your advice?'}
+          style={styles.text_field}
+        />
+      </View>
 
-      <Text>Details</Text>
-      <TextInput
-        placeholder='Any additional context or information?'
-      />
+
+      <View style={styles.container}>
+        <Text>Details</Text>
+        <TextInput
+          placeholder='Any additional context or information?'
+          style={styles.text_field}
+        />
+      </View>
 
       {/* Floating Post Button */}
-      <TouchableOpacity>
-        
+      <TouchableOpacity style={styles.post_button}>
+        <Text style={{color: '#fff'}}>Post</Text>
       </TouchableOpacity>
         
     </View>
@@ -70,7 +78,39 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  button_container: {
+    flex: 1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   text: {
     color: '#000',
   },
+  title: {
+    fontSize: 32,
+    padding: 10,
+  },
+  text_field: {
+    backgroundColor: '#fff',
+    padding: 6,
+    borderColor: '#444',
+    borderWidth: 1,
+    borderRadius: 5
+  },
+  type_button: {
+    flex: 0,
+    display: 'flex',
+    padding: 20,
+    margin: 5
+  },
+  post_button: {
+    backgroundColor: '#007BFF',
+    width: '80%',
+    justifyContent: 'center',
+    borderColor: '#444',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 15
+  }
 });
