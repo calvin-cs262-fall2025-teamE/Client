@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -5,26 +6,30 @@ import { ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOp
 export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const router = useRouter();
-
   const suggestions = ["RVD"];
 
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
-        source={require("../../assets/images/calvin-bg.jpg")}
+        source={require("@/assets/images/calvin-bg.jpg")}
         style={styles.background}
         imageStyle={{ resizeMode: "cover" }}
       >
         <View style={styles.overlay}>
           <Text style={styles.title}>Welcome</Text>
 
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search..."
-            placeholderTextColor="#aaa"
-            value={query}
-            onChangeText={setQuery}
-          />
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search..."
+              placeholderTextColor="#aaa"
+              value={query}
+              onChangeText={setQuery}
+            />
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="search" size={22} color="white" />
+            </TouchableOpacity>
+          </View>
 
           {query.length > 0 &&
             suggestions
@@ -43,6 +48,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   background: {
     flex: 1,
@@ -64,13 +70,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  searchBar: {
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "white",
     borderRadius: 5,
+    width: "100%",
+    marginBottom: 10,
+  },
+  searchBar: {
+    flex: 1,
     padding: 10,
     fontSize: 16,
-    marginBottom: 10,
-    width: "100%",
+  },
+  iconButton: {
+    backgroundColor: "#333",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    padding: 10,
   },
   suggestion: {
     padding: 10,
