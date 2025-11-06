@@ -42,8 +42,3 @@ export const commonStyles = StyleSheet.create({
         backgroundColor: '#FF9176',
     },
 });
-
-// Header (non-style) configuration constants
-export const headerConfig = {
-    tintColor: 'white',
-};
