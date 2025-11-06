@@ -1,12 +1,13 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ImageBackground, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ImageBackground, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 export default function HomeScreen() {
   const [query, setQuery] = useState("");
   const router = useRouter();
-
   const suggestions = ["RVD"];
+  const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -17,23 +18,51 @@ export default function HomeScreen() {
       >
         <View style={styles.overlay}>
           <Text style={styles.title}>Welcome</Text>
+          
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchBar}
+              placeholder="Search..."
+              placeholderTextColor="#aaa"
+              value={query}
+              onChangeText={setQuery}
+            />
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="search" size={22} color="white" />
+            </TouchableOpacity>
+          </View>
 
-          <TextInput
-            style={styles.searchBar}
-            placeholder="Search..."
-            placeholderTextColor="#aaa"
-            value={query}
-            onChangeText={setQuery}
-          />
+          <View style={styles.tagsContainer}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.tagsRow}>
+                {fixedTags.map((tag) => (
+                  <TouchableOpacity
+                    key={tag}
+                    onPress={() => router.push(`/${tag}`)}
+                    style={styles.tagButton}
+                  >
+                    <Text style={styles.tagText}>#{tag}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+          </View>
 
-          {query.length > 0 &&
-            suggestions
-              .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
-              .map((item) => (
-                <TouchableOpacity key={item} onPress={() => router.push(`/${item}`)} style={styles.suggestion}>
-                  <Text style={styles.suggestionText}>{item}</Text>
-                </TouchableOpacity>
-              ))}
+          {query.length > 0 && (
+            <View style={styles.suggestionsContainer}>
+              {suggestions
+                .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
+                .map((item) => (
+                  <TouchableOpacity
+                    key={item}
+                    onPress={() => router.push(`/${item}`)}
+                    style={styles.suggestion}
+                  >
+                    <Text style={styles.suggestionText}>{item}</Text>
+                  </TouchableOpacity>
+                ))}
+            </View>
+          )}
         </View>
       </ImageBackground>
     </SafeAreaView>
@@ -64,12 +93,47 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 20,
   },
-  searchBar: {
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "white",
     borderRadius: 5,
+    width: "100%",
+    marginBottom: 15,
+  },
+  searchBar: {
+    flex: 1,
     padding: 10,
     fontSize: 16,
-    marginBottom: 10,
+  },
+  iconButton: {
+    backgroundColor: "#333",
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+    padding: 10,
+  },
+  tagsContainer: {
+    width: "100%",
+    marginBottom: 15,
+  },
+  tagsRow: {
+    flexDirection: "row",
+    gap: 10,
+    paddingVertical: 5,
+  },
+  tagButton: {
+    backgroundColor: "#4a90e2",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  tagText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  suggestionsContainer: {
     width: "100%",
   },
   suggestion: {
