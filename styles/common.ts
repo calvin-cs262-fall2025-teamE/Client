@@ -38,6 +38,11 @@ export const commonStyles = StyleSheet.create({
         fontWeight: '600',
     },
 
+    titleText: {
+        fontSize: 26,
+        color: 'black',
+    },
+
     headerStyle: {
         backgroundColor: '#FF9176',
     },
