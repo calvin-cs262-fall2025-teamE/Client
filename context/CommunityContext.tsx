@@ -17,7 +17,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
  * @property deleteItem - Function to remove an item by its ID
  */
 interface CommunityContextType {
-    Communitys: Community[]; // We'll work this in with our schema
+    communities: Community[]; // We'll work this in with our schema
     deleteCommunity: (id: number) => void;
 }
 
@@ -36,7 +36,7 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     // Initialize items from imported JSON data
-    const [Communitys, setCommunities] = useState<Community[]>([defaultCommunity]); // Just adds the default community by default
+    const [communities, setCommunities] = useState<Community[]>([defaultCommunity]); // Just adds the default community by default
 
     /**
      * Removes an item from the list by filtering out the matching ID
@@ -49,7 +49,7 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
 
     // Context value object containing all state and actions
     const value: CommunityContextType = {
-        Communitys,
+        communities,
         deleteCommunity,
     };
 

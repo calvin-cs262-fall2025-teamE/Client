@@ -1,5 +1,7 @@
+import { useCommunityContext } from "@/context/CommunityContext";
 import { usePostContext } from "@/context/PostContext";
-import { useRouter } from "expo-router";
+import { Community, defaultCommunity } from "@/types/Community";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
     Dimensions,
@@ -96,8 +98,17 @@ function Icon({ name, size = 22, color = "#555" }: IconProps) {
 }
 
 export default function CommunityPage() {
+    const { communityId } = useLocalSearchParams();
+
+    const { communities } = useCommunityContext();
+
+    const selectedCommunity: Community = communities.find(item => item.communityID.toString() === communityId) || defaultCommunity;
+
     const { posts } = usePostContext();
     const router = useRouter();
+
+    // We'll eventually want to use an SQL statment to retrieve just these
+    const selectedPosts = posts.filter(post => post.communityId.toString() === communityId);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -132,7 +143,7 @@ export default function CommunityPage() {
 
         {/* Feed */}
         <FlatList
-          data={posts}
+          data={selectedPosts}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 90 }}

@@ -15,8 +15,10 @@ export default function TabLayout() {
           <Tabs.Screen name="search" options={{ title: 'Search' }} />
         </PostProvider>
 
-        {/* Posts doesn't get a post provider because you don't need to zoom in on any post details from here */}
-        <Tabs.Screen name="post" options={{ title: 'Post' }} /> 
+        {/* Posts doesn't get a post provider because you don't need to zoom in on any post details from here, but I gave it its own community provider because it changed the tab order somehow */}
+        <CommunityProvider>
+          <Tabs.Screen name="post" options={{ title: 'Post' }} /> 
+        </CommunityProvider>
 
         <PostProvider>
           <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
