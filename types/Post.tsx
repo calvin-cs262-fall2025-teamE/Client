@@ -8,6 +8,7 @@ export interface Post {
     communityId: number,
     upvotes: number,
     timePosted: Date,
+    content: string,
 }
 
 export const defaultPost: Post = {
@@ -18,4 +19,5 @@ export const defaultPost: Post = {
     communityId: 0,
     upvotes: 10,
     timePosted: new Date(),
+    content: "This is the default post",
 };
