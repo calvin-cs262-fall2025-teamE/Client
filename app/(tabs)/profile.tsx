@@ -1,8 +1,17 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
+  const router = useRouter();
+  const { user, signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
+
+  const handleSignOut = () => {
+    signOut();
+    router.replace('/login');
+  };
 
   const posts = [
     { id: '1', user: 'User A', text: 'Excited to join the Calvin Community Hub!', time: '2h ago' },
@@ -20,8 +29,12 @@ export default function AboutScreen() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity activeOpacity={0.7} style={styles.gearButton}>
-          <Text style={styles.gearIcon}>⚙️</Text>
+        <TouchableOpacity 
+          activeOpacity={0.7} 
+          style={styles.signOutButton}
+          onPress={handleSignOut}
+        >
+          <Text style={styles.signOutText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
 
@@ -30,11 +43,17 @@ export default function AboutScreen() {
           <View style={styles.avatarLarge}>
             <Text style={styles.avatarEmoji}>👤</Text>
           </View>
-          <Text style={styles.username}>User Name</Text>
-          <Text style={styles.bio} numberOfLines={2}>
-            Short bio goes here. This is a placeholder for a quick introduction.
+          <Text style={styles.username}>
+            {user ? `${user.firstName} ${user.lastName}` : 'User Name'}
           </Text>
-          <TouchableOpacity activeOpacity={0.8} style={styles.editButton}>
+          <Text style={styles.bio} numberOfLines={2}>
+            {user?.email || 'Short bio goes here. This is a placeholder for a quick introduction.'}
+          </Text>
+          <TouchableOpacity 
+            activeOpacity={0.8} 
+            style={styles.editButton}
+            onPress={() => router.push('/edit-profile')}
+          >
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -117,12 +136,13 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: DARK_BLUE,
   },
-  gearButton: {
+  signOutButton: {
     padding: 8,
-    borderRadius: 999,
+    borderRadius: 6,
   },
-  gearIcon: {
-    fontSize: 20,
+  signOutText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: DARK_BLUE,
   },
   scrollContent: {
