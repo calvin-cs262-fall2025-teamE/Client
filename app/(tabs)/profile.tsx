@@ -1,8 +1,45 @@
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { 
+  ScrollView, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  View,
+  Modal,
+  Alert,
+  Pressable 
+} from 'react-native';
+import { Feather } from '@expo/vector-icons';
 
 export default function AboutScreen() {
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
+  const [isSettingsVisible, setIsSettingsVisible] = useState(false);
+
+  const settingsOptions: Array<{
+    id: string;
+    icon: keyof typeof Feather.glyphMap;
+    label: string;
+  }> = [
+    { id: 'edit', icon: 'edit-2', label: 'Edit Profile' },
+    { id: 'saved', icon: 'bookmark', label: 'Saved Posts' },
+    { id: 'activity', icon: 'activity', label: 'My Activity' },
+    { id: 'message', icon: 'message-circle', label: 'Comments' },
+    { id: 'bell', icon: 'bell', label: 'Notifications' },
+    { id: 'lock', icon: 'lock', label: 'Privacy Settings' },
+    { id: 'help-circle', icon: 'help-circle', label: 'Help / Support' },
+    { id: 'info', icon: 'info', label: 'About' },
+    { id: 'log-out', icon: 'log-out', label: 'Log Out' },
+  ];
+
+  const handleSettingsOption = (id: string) => {
+    setIsSettingsVisible(false);
+    console.log(`${id} option clicked`);
+    if (id === 'log-out') {
+      Alert.alert('Log Out', 'Are you sure you want to log out?');
+    } else {
+      Alert.alert(settingsOptions.find(opt => opt.id === id)?.label || '', 'This feature is coming soon!');
+    }
+  };
 
   const posts = [
     { id: '1', user: 'User A', text: 'Excited to join the Calvin Community Hub!', time: '2h ago' },
@@ -20,8 +57,12 @@ export default function AboutScreen() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity activeOpacity={0.7} style={styles.gearButton}>
-          <Text style={styles.gearIcon}>⚙️</Text>
+        <TouchableOpacity 
+          activeOpacity={0.7} 
+          style={styles.gearButton}
+          onPress={() => setIsSettingsVisible(true)}
+        >
+          <Feather name="settings" size={24} color="#374151" />
         </TouchableOpacity>
       </View>
 
@@ -91,6 +132,37 @@ export default function AboutScreen() {
           </View>
         )}
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isSettingsVisible}
+        onRequestClose={() => setIsSettingsVisible(false)}
+      >
+        <Pressable 
+          style={styles.modalOverlay} 
+          onPress={() => setIsSettingsVisible(false)}
+        >
+          <View style={styles.modalContent}>
+            <View style={styles.modalHandle} />
+            
+            <ScrollView style={styles.settingsList}>
+              {settingsOptions.map((option) => (
+                <TouchableOpacity
+                  key={option.id}
+                  style={styles.settingsItem}
+                  onPress={() => handleSettingsOption(option.id)}
+                  activeOpacity={0.7}
+                >
+                  <Feather name={option.icon} size={22} color="#374151" />
+                  <Text style={styles.settingsLabel}>{option.label}</Text>
+                  <Feather name="chevron-right" size={20} color="#9CA3AF" />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -100,6 +172,51 @@ const DARK_BLUE = '#003366';
 const WHITE = '#FFFFFF';
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 12,
+    paddingBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 16,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 12,
+  },
+  settingsList: {
+    maxHeight: '80%',
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E5E7EB',
+  },
+  settingsLabel: {
+    flex: 1,
+    marginLeft: 16,
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500',
+  },
   container: {
     flex: 1,
     backgroundColor: LIGHT_BLUE,
