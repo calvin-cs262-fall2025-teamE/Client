@@ -1,17 +1,230 @@
 import React, { useState } from 'react';
-import { 
-  ScrollView, 
-  StyleSheet, 
-  Text, 
-  TouchableOpacity, 
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
   Modal,
   Alert,
-  Pressable 
+  Pressable
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 
-export default function AboutScreen() {
+const LIGHT_BLUE = '#ADD8E6';
+const DARK_BLUE = '#003366';
+const WHITE = '#FFFFFF';
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: LIGHT_BLUE,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 32,
+    paddingBottom: 12,
+    backgroundColor: LIGHT_BLUE,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: DARK_BLUE,
+  },
+  gearButton: {
+    padding: 8,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  scrollContent: {
+    paddingBottom: 32,
+  },
+  profileSection: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  avatarLarge: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: WHITE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  avatarEmoji: {
+    fontSize: 40,
+  },
+  username: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: DARK_BLUE,
+    marginBottom: 4,
+  },
+  bio: {
+    fontSize: 14,
+    color: '#374151',
+    textAlign: 'center',
+    marginBottom: 8,
+    paddingHorizontal: 16,
+  },
+  editButton: {
+    backgroundColor: DARK_BLUE,
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    marginTop: 8,
+  },
+  editButtonText: {
+    color: WHITE,
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  tabsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  tabItem: {
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'transparent',
+  },
+  tabItemActive: {
+    backgroundColor: WHITE,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  tabText: {
+    fontSize: 16,
+    color: DARK_BLUE,
+    fontWeight: '500',
+  },
+  tabTextActive: {
+    color: '#2563EB',
+    fontWeight: 'bold',
+  },
+  listContainer: {
+    paddingHorizontal: 16,
+  },
+  card: {
+    backgroundColor: WHITE,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.06,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  avatarSmall: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: LIGHT_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  avatarSmallEmoji: {
+    fontSize: 20,
+  },
+  cardHeaderText: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: DARK_BLUE,
+  },
+  cardTimestamp: {
+    fontSize: 12,
+    color: '#737373',
+  },
+  cardBody: {
+    fontSize: 15,
+    color: '#374151',
+  },
+  communityBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: LIGHT_BLUE,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+  communityBadgeText: {
+    fontSize: 18,
+    color: DARK_BLUE,
+    fontWeight: 'bold',
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: WHITE,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingTop: 12,
+    paddingBottom: 32,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -4,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 16,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 12,
+  },
+  settingsList: {
+    maxHeight: '80%',
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E5E7EB',
+  },
+  settingsLabel: {
+    flex: 1,
+    marginLeft: 16,
+    fontSize: 16,
+    color: '#111827',
+    fontWeight: '500',
+  },
+});
+
+export default function ProfileScreen() {
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
 
@@ -57,8 +270,8 @@ export default function AboutScreen() {
     <View style={styles.container}>
       <View style={styles.headerRow}>
         <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity 
-          activeOpacity={0.7} 
+        <TouchableOpacity
+          activeOpacity={0.7}
           style={styles.gearButton}
           onPress={() => setIsSettingsVisible(true)}
         >
@@ -139,13 +352,12 @@ export default function AboutScreen() {
         visible={isSettingsVisible}
         onRequestClose={() => setIsSettingsVisible(false)}
       >
-        <Pressable 
-          style={styles.modalOverlay} 
+        <Pressable
+          style={styles.modalOverlay}
           onPress={() => setIsSettingsVisible(false)}
         >
           <View style={styles.modalContent}>
             <View style={styles.modalHandle} />
-            
             <ScrollView style={styles.settingsList}>
               {settingsOptions.map((option) => (
                 <TouchableOpacity
@@ -166,214 +378,3 @@ export default function AboutScreen() {
     </View>
   );
 }
-
-const LIGHT_BLUE = '#ADD8E6';
-const DARK_BLUE = '#003366';
-const WHITE = '#FFFFFF';
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingTop: 12,
-    paddingBottom: 32,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -4,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 16,
-  },
-  modalHandle: {
-    width: 40,
-    height: 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
-    alignSelf: 'center',
-    marginBottom: 12,
-  },
-  settingsList: {
-    maxHeight: '80%',
-  },
-  settingsItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#E5E7EB',
-  },
-  settingsLabel: {
-    flex: 1,
-    marginLeft: 16,
-    fontSize: 16,
-    color: '#111827',
-    fontWeight: '500',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: LIGHT_BLUE,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-  },
-  headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: DARK_BLUE,
-  },
-  gearButton: {
-    padding: 8,
-    borderRadius: 999,
-  },
-  gearIcon: {
-    fontSize: 20,
-    color: DARK_BLUE,
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
-  profileSection: {
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
-  },
-  avatarLarge: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
-    backgroundColor: DARK_BLUE,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarEmoji: {
-    fontSize: 44,
-    color: WHITE,
-  },
-  username: {
-    marginTop: 12,
-    fontSize: 20,
-    fontWeight: '700',
-    color: DARK_BLUE,
-  },
-  bio: {
-    marginTop: 6,
-    fontSize: 14,
-    color: DARK_BLUE,
-    textAlign: 'center',
-    paddingHorizontal: 16,
-  },
-  editButton: {
-    marginTop: 12,
-    backgroundColor: DARK_BLUE,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  editButtonText: {
-    color: WHITE,
-    fontWeight: '600',
-  },
-  tabsRow: {
-    flexDirection: 'row',
-    marginTop: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: LIGHT_BLUE,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 3,
-    borderBottomColor: 'transparent',
-  },
-  tabItemActive: {
-    borderBottomColor: DARK_BLUE,
-  },
-  tabText: {
-    fontSize: 16,
-    color: 'rgba(0, 51, 102, 0.65)',
-    fontWeight: '600',
-  },
-  tabTextActive: {
-    color: DARK_BLUE,
-  },
-  listContainer: {
-    marginTop: 12,
-    gap: 12,
-  },
-  card: {
-    backgroundColor: WHITE,
-    borderWidth: 1,
-    borderColor: LIGHT_BLUE,
-    borderRadius: 10,
-    padding: 12,
-    // Subtle shadow (Android + iOS)
-    shadowColor: DARK_BLUE,
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
-    elevation: 2,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  avatarSmall: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: DARK_BLUE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  avatarSmallEmoji: {
-    fontSize: 18,
-    color: WHITE,
-  },
-  cardHeaderText: {
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: DARK_BLUE,
-  },
-  cardTimestamp: {
-    marginTop: 2,
-    fontSize: 12,
-    color: 'rgba(0, 51, 102, 0.7)',
-  },
-  cardBody: {
-    fontSize: 14,
-    color: DARK_BLUE,
-  },
-  communityBadge: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: LIGHT_BLUE,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  communityBadgeText: {
-    color: WHITE,
-    fontWeight: '900',
-  },
-});
