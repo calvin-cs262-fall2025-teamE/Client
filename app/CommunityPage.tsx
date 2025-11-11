@@ -1,15 +1,19 @@
+import { useCommunityContext } from "@/context/CommunityContext";
+import { usePostContext } from "@/context/PostContext";
+import { Community, defaultCommunity } from "@/types/Community";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Dimensions,
+    FlatList,
+    Image,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
@@ -93,7 +97,19 @@ function Icon({ name, size = 22, color = "#555" }: IconProps) {
   );
 }
 
-export default function RVD() {
+export default function CommunityPage() {
+    const { communityId } = useLocalSearchParams();
+
+    const { communities } = useCommunityContext();
+
+    const selectedCommunity: Community = communities.find(item => item.communityID.toString() === communityId) || defaultCommunity;
+
+    const { posts } = usePostContext();
+    const router = useRouter();
+
+    // We'll eventually want to use an SQL statment to retrieve just these
+    const selectedPosts = posts.filter(post => post.communityId.toString() === communityId);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -127,30 +143,37 @@ export default function RVD() {
 
         {/* Feed */}
         <FlatList
-          data={POSTS}
-          keyExtractor={item => item.id}
+          data={selectedPosts}
+          keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 90 }}
           renderItem={({ item }) => (
-            <View style={styles.postCard}>
-              <Image source={item.user.avatar} style={styles.postAvatar} />
+            <TouchableOpacity 
+            style={styles.postCard}
+            onPress={() => router.push({
+                pathname: "./post-details",
+                params: { id: item.id } // Here is an example of parameters
+            })}
+            >
+              {/* <Image source={item.user.avatar} style={styles.postAvatar} /> */}
+              {/* TODO: Here we need some kind of query to get the username of the person who posted this */}
               <View style={{ flex: 1 }}>
                 <View style={styles.postHeader}>
-                  <Text style={styles.postName}>{item.user.name}</Text>
-                  <Text style={styles.postHandle}>{item.user.handle} · {item.time}</Text>
+                  <Text style={styles.postName}>{item.title}</Text>
+                  {/* <Text style={styles.postHandle}>{item.user.handle} · {item.time}</Text> */}
                 </View>
-                <Text style={styles.postText}>{item.text}</Text>
-                {item.image && (
+                <Text style={styles.postText}>{item.content}</Text>
+                {/* {item.image && (
                   <Image source={item.image} style={styles.postImage} resizeMode="cover" />
-                )}
+                )} */}
                 <View style={styles.postActions}>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="reply" size={20} color="#555" /></TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="retweet" size={20} color="#17bf63" /></TouchableOpacity>
+                  {/* <TouchableOpacity style={styles.actionBtn}><Icon name="reply" size={20} color="#555" /></TouchableOpacity>
+                  <TouchableOpacity style={styles.actionBtn}><Icon name="retweet" size={20} color="#17bf63" /></TouchableOpacity> */}
                   <TouchableOpacity style={styles.actionBtn}><Icon name="like" size={20} color="#e0245e" /></TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}><Icon name="share" size={20} color="#1da1f2" /></TouchableOpacity>
+                  {/* <TouchableOpacity style={styles.actionBtn}><Icon name="share" size={20} color="#1da1f2" /></TouchableOpacity> */}
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
         />
 

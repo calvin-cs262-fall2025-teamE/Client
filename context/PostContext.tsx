@@ -17,7 +17,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
  * @property deleteItem - Function to remove an item by its ID
  */
 interface PostContextType {
-    posts: Post[]; // We'll work this in with our schema
+    posts: Post[]; // This will work in with out schema
     deletePost: (id: number) => void;
 }
 
@@ -36,7 +36,24 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     // Initialize items from imported JSON data
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<Post[]>([
+        {id: 1,
+        type: 'question',
+        title: 'Where\'s the best study spot?',
+        authorId: 0,
+        communityId: 0,
+        upvotes: 16,
+        timePosted: new Date(),
+        content: "This is the default post",},
+        {id: 2,
+        type: 'question',
+        title: 'Is it true that there is a fire drill later today?',
+        authorId: 0,
+        communityId: 0,
+        upvotes: 2,
+        timePosted: new Date(),
+        content: "This is the default post",}
+    ]);
 
     /**
      * Removes an item from the list by filtering out the matching ID
