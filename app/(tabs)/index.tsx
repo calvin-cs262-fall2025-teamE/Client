@@ -1,4 +1,3 @@
-import { PostProvider } from '@/context/PostContext';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -47,7 +46,7 @@ export default function HomeScreen() {
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{ paddingHorizontal: 10 }}
-            >
+            />
               <View style={styles.tagsRow}>
                 {fixedTags.map((tag) => (
                   <TouchableOpacity
@@ -59,7 +58,6 @@ export default function HomeScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-            )}
           </View>
 
           {query.length > 0 && (
