@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from './AuthContext';
 
 export default function EditProfileScreen() {
@@ -13,6 +14,29 @@ export default function EditProfileScreen() {
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [bio, setBio] = useState('');
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert('Permission Denied', 'We need camera roll permissions to change your profile picture.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && user) {
+      updateUser({
+        ...user,
+        profileImage: result.assets[0].uri,
+      });
+    }
+  };
 
   const handleSave = () => {
     if (!firstName.trim() || !lastName.trim()) {
@@ -52,9 +76,16 @@ export default function EditProfileScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.avatarSection}>
           <View style={styles.avatarLarge}>
-            <Text style={styles.avatarEmoji}>👤</Text>
+            {user?.profileImage ? (
+              <Image 
+                source={{ uri: user.profileImage }} 
+                style={styles.avatarImage}
+              />
+            ) : (
+              <Text style={styles.avatarEmoji}>👤</Text>
+            )}
           </View>
-          <TouchableOpacity style={styles.changePhotoButton}>
+          <TouchableOpacity style={styles.changePhotoButton} onPress={pickImage}>
             <Text style={styles.changePhotoText}>Change Photo</Text>
           </TouchableOpacity>
         </View>
@@ -182,6 +213,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#003366',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  avatarImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
   },
   avatarEmoji: {
     fontSize: 44,

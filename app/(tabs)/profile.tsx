@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
@@ -41,7 +41,14 @@ export default function AboutScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.profileSection}>
           <View style={styles.avatarLarge}>
-            <Text style={styles.avatarEmoji}>👤</Text>
+            {user?.profileImage ? (
+              <Image 
+                source={{ uri: user.profileImage }} 
+                style={styles.avatarImage}
+              />
+            ) : (
+              <Text style={styles.avatarEmoji}>👤</Text>
+            )}
           </View>
           <Text style={styles.username}>
             {user ? `${user.firstName} ${user.lastName}` : 'User Name'}
@@ -161,6 +168,11 @@ const styles = StyleSheet.create({
     backgroundColor: DARK_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  avatarImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
   },
   avatarEmoji: {
     fontSize: 44,
