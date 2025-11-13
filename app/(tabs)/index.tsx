@@ -1,3 +1,4 @@
+import { PostProvider } from '@/context/PostContext';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -58,7 +59,7 @@ export default function HomeScreen() {
                   </TouchableOpacity>
                 ))}
               </View>
-            </ScrollView>
+            )}
           </View>
 
           {query.length > 0 && (
