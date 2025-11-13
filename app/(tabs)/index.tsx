@@ -21,7 +21,7 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <ImageBackground
-        source={require("../../assets/images/calvin-bg.jpg")}
+        source={require("@/assets/images/calvin-bg.jpg")}
         style={styles.background}
         imageStyle={{ resizeMode: "cover" }}
       >
@@ -87,6 +87,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "transparent",
   },
   background: {
     flex: 1,
@@ -121,6 +122,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 2 },
     elevation: 3,
+    marginBottom: 10,
   },
   searchBar: {
     flex: 1,
