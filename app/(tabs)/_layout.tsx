@@ -1,28 +1,37 @@
 import { CommunityProvider } from '@/context/CommunityContext';
-import { PostProvider } from '@/context/PostContext';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
+
 
 export default function TabLayout() {
   return (
     <CommunityProvider>
       <Tabs>
-        {/* Here we use seperate post providers because each screen might keep track of a different post */}
-        <PostProvider>
-          <Tabs.Screen name="index" options={{ title: 'Home' }} />
-        </PostProvider>
+        {/* Here we used to use seperate post providers because each screen might keep track of a different post */}
+        {/* However, to allow icons and order to work, this providers are put into the pages themselves */}
+        <Tabs.Screen name="index" options={{ 
+          title: 'Home',
+          tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? 'compass' : 'compass-outline'} color={color} size={24} /> 
+          ), }}/>
 
-        <PostProvider>
-          <Tabs.Screen name="search" options={{ title: 'Search' }} />
-        </PostProvider>
+        <Tabs.Screen name="search" options={{ 
+          title: 'Search',
+          tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? 'search-circle' : 'search-circle-outline'} color={color} size={24} /> 
+          ), }}/>
 
-        {/* Posts doesn't get a post provider because you don't need to zoom in on any post details from here, but I gave it its own community provider because it changed the tab order somehow */}
-        <CommunityProvider>
-          <Tabs.Screen name="post" options={{ title: 'Post' }} /> 
-        </CommunityProvider>
+        <Tabs.Screen name="post" options={{ 
+          title: 'Post',
+          tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? 'add-circle' : 'add'} color={color} size={24} /> 
+          ), }}/>
 
-        <PostProvider>
-          <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-        </PostProvider>
+        <Tabs.Screen name="profile" options={{ 
+          title: 'Profile',
+          tabBarIcon: ({ color, focused }) => (
+          <Ionicons name={focused ? 'library' : 'library-outline'} color={color} size={24} /> 
+          ), }}/>
       </Tabs>
     </CommunityProvider>
   );

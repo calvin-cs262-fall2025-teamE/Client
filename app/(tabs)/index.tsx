@@ -1,3 +1,4 @@
+import { PostProvider } from '@/context/PostContext';
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -10,62 +11,64 @@ export default function HomeScreen() {
   const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ImageBackground
-        source={require("@/assets/images/calvin-bg.jpg")}
-        style={styles.background}
-        imageStyle={{ resizeMode: "cover" }}
-      >
-        <View style={styles.overlay}>
-          <Text style={styles.title}>Welcome</Text>
-          
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.searchBar}
-              placeholder="Search..."
-              placeholderTextColor="#aaa"
-              value={query}
-              onChangeText={setQuery}
-            />
-            <TouchableOpacity style={styles.iconButton}>
-              <Ionicons name="search" size={22} color="white" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.tagsContainer}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.tagsRow}>
-                {fixedTags.map((tag) => (
-                  <TouchableOpacity
-                    key={tag}
-                    onPress={() => router.push(`/${tag}`)}
-                    style={styles.tagButton}
-                  >
-                    <Text style={styles.tagText}>#{tag}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </ScrollView>
-          </View>
-
-          {query.length > 0 && (
-            <View style={styles.suggestionsContainer}>
-              {suggestions
-                .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
-                .map((item) => (
-                  <TouchableOpacity
-                    key={item}
-                    onPress={() => router.push(`/${item}`)}
-                    style={styles.suggestion}
-                  >
-                    <Text style={styles.suggestionText}>{item}</Text>
-                  </TouchableOpacity>
-                ))}
+    <PostProvider>
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          source={require("@/assets/images/calvin-bg.jpg")}
+          style={styles.background}
+          imageStyle={{ resizeMode: "cover" }}
+        >
+          <View style={styles.overlay}>
+            <Text style={styles.title}>Welcome</Text>
+            
+            <View style={styles.searchContainer}>
+              <TextInput
+                style={styles.searchBar}
+                placeholder="Search..."
+                placeholderTextColor="#aaa"
+                value={query}
+                onChangeText={setQuery}
+              />
+              <TouchableOpacity style={styles.iconButton}>
+                <Ionicons name="search" size={22} color="white" />
+              </TouchableOpacity>
             </View>
-          )}
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
+
+            <View style={styles.tagsContainer}>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.tagsRow}>
+                  {fixedTags.map((tag) => (
+                    <TouchableOpacity
+                      key={tag}
+                      onPress={() => router.push(`/${tag}`)}
+                      style={styles.tagButton}
+                    >
+                      <Text style={styles.tagText}>#{tag}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+
+            {query.length > 0 && (
+              <View style={styles.suggestionsContainer}>
+                {suggestions
+                  .filter((item) => item.toLowerCase().includes(query.toLowerCase()))
+                  .map((item) => (
+                    <TouchableOpacity
+                      key={item}
+                      onPress={() => router.push(`/${item}`)}
+                      style={styles.suggestion}
+                    >
+                      <Text style={styles.suggestionText}>{item}</Text>
+                    </TouchableOpacity>
+                  ))}
+              </View>
+            )}
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
+    </PostProvider>
   );
 }
 
