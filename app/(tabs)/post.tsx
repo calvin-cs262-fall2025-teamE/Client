@@ -32,6 +32,8 @@ export default function AboutScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Create Post Here</Text>
+
+      <Text>Posting in community: RVD</Text>
       
       <View style={styles.button_container}>
         <CustomRadioButton
@@ -58,6 +60,8 @@ export default function AboutScreen() {
       <View style={styles.container}>
         <Text>Details</Text>
         <TextInput
+          multiline
+          numberOfLines={5}
           placeholder='Any additional context or information?'
           style={styles.text_field}
         />
@@ -98,11 +102,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5
   },
+  big_text_field: {
+    backgroundColor: '#fff',
+    padding: 6,
+    borderColor: '#444',
+    borderWidth: 1,
+    borderRadius: 5
+  },
   type_button: {
     flex: 0,
     display: 'flex',
     padding: 20,
-    margin: 5
+    margin: 5,
+    borderRadius: 5
   },
   post_button: {
     backgroundColor: '#007BFF',
