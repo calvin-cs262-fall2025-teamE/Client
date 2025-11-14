@@ -1,5 +1,8 @@
-import { Text, View, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TextInput, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import { useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeContext';
 
 interface Community {
   id: string;
@@ -15,6 +18,7 @@ interface Post {
 }
 
 export default function SearchScreen() {
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [communities, setCommunities] = useState<Community[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -53,206 +57,215 @@ export default function SearchScreen() {
     setPosts(foundPosts);
   };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: '#fff',
-    },
-    searchInput: {
-      height: 44,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      borderRadius: 8,
-      paddingHorizontal: 16,
-      marginBottom: 16,
-      fontSize: 16,
-    },
-    resultsContainer: {
-      flex: 1,
-    },
-    section: {
-      marginBottom: 24,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 12,
-      color: '#333',
-    },
-    communityItem: {
-      padding: 12,
-      backgroundColor: '#f8f8f8',
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    communityName: {
-      fontSize: 16,
-      fontWeight: '500',
-      color: '#333',
-      marginBottom: 4,
-    },
-    memberCount: {
-      fontSize: 14,
-      color: '#666',
-    },
-    postItem: {
-      padding: 12,
-      backgroundColor: '#f8f8f8',
-      borderRadius: 8,
-      marginBottom: 8,
-    },
-    postTitle: {
-      fontSize: 16,
-      fontWeight: '500',
-      color: '#333',
-      marginBottom: 8,
-    },
-    postMeta: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    communityTag: {
-      fontSize: 14,
-      color: '#666',
-      marginRight: 8,
-    },
-    tag: {
-      fontSize: 14,
-      color: '#007AFF',
-    },
-    noResults: {
-      textAlign: 'center',
-      color: '#666',
-      marginTop: 24,
-      fontSize: 16,
-    },
-  });
-
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Search communities, posts, or tags..."
-        value={searchQuery}
-        onChangeText={(text) => {
-          setSearchQuery(text);
-          // Trigger search on each text change
-          setTimeout(() => {
-            handleSearch();
-          }, 0);
-        }}
-        returnKeyType="search"
-        autoCapitalize="none"
-      />
-
-      <ScrollView style={styles.resultsContainer}>
-        {communities.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Communities</Text>
-            {communities.map(community => (
-              <TouchableOpacity key={community.id} style={styles.communityItem}>
-                <Text style={styles.communityName}>{community.name}</Text>
-                <Text style={styles.memberCount}>{community.members} members</Text>
-              </TouchableOpacity>
-            ))}
+    <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={theme.colors.background}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.background}
+      >
+        <View style={styles.content}>
+          <View style={styles.hero}>
+            <Text style={[styles.title, { color: theme.colors.text }]}>Search</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Discover communities and posts</Text>
           </View>
-        )}
 
-        {posts.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Posts</Text>
-            {posts.map(post => (
-              <TouchableOpacity key={post.id} style={styles.postItem}>
-                <Text style={styles.postTitle}>{post.title}</Text>
-                <View style={styles.postMeta}>
-                  <Text style={styles.communityTag}>{post.community}</Text>
-                  <Text style={styles.tag}>#{post.tag}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+          <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <TextInput
+              style={[styles.searchInput, { color: theme.colors.text }]}
+              placeholder="Search communities, posts, or tags..."
+              placeholderTextColor={theme.colors.textSecondary}
+              value={searchQuery}
+              onChangeText={(text) => {
+                setSearchQuery(text);
+                setTimeout(() => {
+                  handleSearch();
+                }, 0);
+              }}
+              returnKeyType="search"
+              autoCapitalize="none"
+            />
+            <TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.primary }]}>
+              <Ionicons name="search" size={22} color="white" />
+            </TouchableOpacity>
           </View>
-        )}
 
-        {searchQuery && communities.length === 0 && posts.length === 0 && (
-          <Text style={styles.noResults}>No results found</Text>
-        )}
-      </ScrollView>
-    </View>
+          <ScrollView style={styles.resultsContainer} showsVerticalScrollIndicator={false}>
+            {communities.length > 0 && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Communities</Text>
+                {communities.map(community => (
+                  <TouchableOpacity key={community.id} style={[styles.communityItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                    <View style={styles.communityContent}>
+                      <Ionicons name="people" size={20} color={theme.colors.primary} />
+                      <View style={{ flex: 1, marginLeft: 12 }}>
+                        <Text style={[styles.communityName, { color: theme.colors.text }]}>{community.name}</Text>
+                        <Text style={[styles.memberCount, { color: theme.colors.textSecondary }]}>{community.members} members</Text>
+                      </View>
+                      <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {posts.length > 0 && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Posts</Text>
+                {posts.map(post => (
+                  <TouchableOpacity key={post.id} style={[styles.postItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                    <Text style={[styles.postTitle, { color: theme.colors.text }]}>{post.title}</Text>
+                    <View style={styles.postMeta}>
+                      <View style={[styles.metaBadge, { backgroundColor: theme.colors.chip }]}>
+                        <Text style={[styles.communityTag, { color: theme.colors.textSecondary }]}>{post.community}</Text>
+                      </View>
+                      <Text style={[styles.tag, { color: theme.colors.primary }]}>#{post.tag}</Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
+            {searchQuery && communities.length === 0 && posts.length === 0 && (
+              <View style={styles.noResultsContainer}>
+                <Ionicons name="search-outline" size={48} color={theme.colors.textSecondary} />
+                <Text style={[styles.noResults, { color: theme.colors.textSecondary }]}>No results found</Text>
+                <Text style={[styles.noResultsHint, { color: theme.colors.textSecondary }]}>Try a different search term</Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+  },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  content: {
+    flex: 1,
+    padding: 20,
+  },
+  hero: {
+    width: "100%",
+    gap: 6,
+    marginBottom: 16,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: "700",
+  },
+  subtitle: {
+    fontSize: 15,
+    marginBottom: 8,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 14,
+    width: "100%",
     marginBottom: 20,
-    color: '#000',
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   searchInput: {
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    marginBottom: 16,
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-    marginBottom: 16,
-  },
-  tagButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: '#f0f0f0',
-    marginRight: 8,
-  },
-  tagButtonSelected: {
-    backgroundColor: '#007AFF',
-  },
-  tagText: {
-    color: '#666',
-  },
-  tagTextSelected: {
-    color: '#fff',
-  },
-  searchButton: {
-    backgroundColor: '#007AFF',
+    flex: 1,
     paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  searchButtonText: {
-    color: '#fff',
+    paddingHorizontal: 14,
     fontSize: 16,
-    fontWeight: 'bold',
+  },
+  iconButton: {
+    borderTopRightRadius: 14,
+    borderBottomRightRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   resultsContainer: {
     flex: 1,
   },
-  resultItem: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  section: {
+    marginBottom: 24,
   },
-  resultTitle: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    marginBottom: 12,
+    marginLeft: 4,
+  },
+  communityItem: {
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: "hidden",
+  },
+  communityContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+  },
+  communityName: {
     fontSize: 16,
-    fontWeight: '500',
-    marginBottom: 8,
+    fontWeight: "600",
+    marginBottom: 4,
   },
-  resultTags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+  memberCount: {
+    fontSize: 14,
   },
-  resultTag: {
-    color: '#007AFF',
-    marginRight: 8,
+  postItem: {
+    padding: 14,
+    borderRadius: 12,
+    marginBottom: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  postTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 10,
+  },
+  postMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  metaBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  communityTag: {
+    fontSize: 13,
+  },
+  tag: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  noResultsContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+    gap: 12,
+  },
+  noResults: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "600",
+  },
+  noResultsHint: {
+    textAlign: "center",
+    fontSize: 14,
   },
 });

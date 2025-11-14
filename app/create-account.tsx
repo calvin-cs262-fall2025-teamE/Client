@@ -1,10 +1,14 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from './AuthContext';
 
 export default function CreateAccountScreen() {
+  const { theme } = useTheme();
   const router = useRouter();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -12,6 +16,8 @@ export default function CreateAccountScreen() {
   const [confirmEmail, setConfirmEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { signIn } = useAuth();
 
   const handleSignIn = () => {
@@ -56,142 +62,253 @@ export default function CreateAccountScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TouchableOpacity onPress={() => router.back()} style={styles.backButtonAbsolute}>
-        <Text style={styles.backButtonText}>Back</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.title}>Create a new account</Text>
-
-      <View style={styles.formContainer}>
-        <TextInput
-          style={styles.input}
-          placeholder="First Name"
-          placeholderTextColor="#777"
-          value={firstName}
-          onChangeText={setFirstName}
-          autoCapitalize="words"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Last Name"
-          placeholderTextColor="#777"
-          value={lastName}
-          onChangeText={setLastName}
-          autoCapitalize="words"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#777"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Email"
-          placeholderTextColor="#777"
-          value={confirmEmail}
-          onChangeText={setConfirmEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          placeholderTextColor="#777"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Confirm Password"
-          placeholderTextColor="#777"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleSignIn}>
-          <Text style={styles.buttonText}>Create account</Text>
+    <LinearGradient
+      colors={theme.colors.background}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.bg}
+    >
+      <SafeAreaView style={styles.container}>
+        <TouchableOpacity onPress={() => router.back()} style={[styles.backButtonAbsolute, { backgroundColor: theme.colors.chip }]}>
+          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
         </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.hero}>
+            <LinearGradient
+              colors={[`${theme.colors.primary}40`, `${theme.colors.accent}30`, "transparent"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.heroGlow}
+              pointerEvents="none"
+            />
+            <Text style={[styles.title, { color: theme.colors.textPrimary, textShadowColor: `${theme.colors.primary}40` }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Join the Calvin community today</Text>
+          </View>
+
+          <View style={[styles.card, { backgroundColor: theme.colors.surface, shadowColor: theme.colors.primary, borderColor: `${theme.colors.primary}20` }]}>
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>First Name</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                placeholder="First Name"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Last Name</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                placeholder="Last Name"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Email</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Email</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={confirmEmail}
+                onChangeText={setConfirmEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Password</Text>
+              <View style={styles.passwordRow}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  placeholder="••••••••"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry={!showPassword}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword((s) => !s)}
+                  style={styles.showBtn}
+                >
+                  <Ionicons 
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'} 
+                    size={22} 
+                    color={theme.colors.textSecondary} 
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Password</Text>
+              <View style={styles.passwordRow}>
+                <TextInput
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  placeholder="••••••••"
+                  placeholderTextColor={theme.colors.textSecondary}
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  secureTextEntry={!showConfirmPassword}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowConfirmPassword((s) => !s)}
+                  style={styles.showBtn}
+                >
+                  <Ionicons 
+                    name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'} 
+                    size={22} 
+                    color={theme.colors.textSecondary} 
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity style={[styles.button, { backgroundColor: theme.colors.primary, shadowColor: theme.colors.primary }]} onPress={handleSignIn}>
+              <Text style={styles.buttonText}>Create account</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Text style={[styles.footerNote, { color: theme.colors.textSecondary }]}>
+            By creating an account, you agree to our Terms & Privacy.
+          </Text>
+        </ScrollView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
+const CARD_MAX = 420;
+
 const styles = StyleSheet.create({
+  bg: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
+  },
+  scrollContent: {
+    padding: 24,
+    paddingTop: 90,
+    alignItems: 'center',
+  },
+  hero: {
+    alignItems: 'center',
+    marginBottom: 24,
+    position: 'relative',
+  },
+  heroGlow: {
+    position: 'absolute',
+    top: -40,
+    left: '50%',
+    marginLeft: -150,
+    width: 300,
+    height: 300,
+    borderRadius: 999,
+    opacity: 0.4,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 20,
+    fontSize: 36,
+    fontWeight: '800',
+    letterSpacing: 1,
+    marginBottom: 8,
+    textAlign: 'center',
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 20,
+  },
+  subtitle: {
+    fontSize: 15,
     textAlign: 'center',
   },
-  input: {
-    width: '75%',
-    borderWidth: 1,
-    borderColor: '#e6e6e6',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 14,
-    backgroundColor: '#fbfbfb',
-    fontSize: 16,
-    color: '#111',
-  },
-  headerRow: {
+  card: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginBottom: 10,
+    maxWidth: CARD_MAX,
+    borderRadius: 20,
+    padding: 24,
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: 8 },
+    elevation: 6,
+    borderWidth: 1,
   },
-  backButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 6,
+  formGroup: {
+    marginBottom: 16,
   },
-  backButtonText: {
-    color: '#007BFF',
-    fontSize: 16,
+  label: {
+    fontSize: 14,
+    marginBottom: 8,
     fontWeight: '600',
   },
-  backButtonAbsolute: {
-    position: 'absolute',
-    top: 60,
-    left: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    zIndex: 20,
-  },
-  formContainer: {
+  input: {
     width: '100%',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+    fontSize: 16,
+  },
+  passwordRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    position: 'relative',
+  },
+  passwordInput: {
+    flex: 1,
+    paddingRight: 50,
+  },
+  showBtn: {
+    position: 'absolute',
+    right: 12,
+    padding: 8,
   },
   button: {
-    width: '75%',
-    backgroundColor: '#007BFF',
-    paddingVertical: 12,
-    borderRadius: 8,
-    justifyContent: 'center',
+    marginTop: 8,
+    width: '100%',
+    paddingVertical: 15,
+    borderRadius: 12,
     alignItems: 'center',
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 4,
   },
   buttonText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 16,
+  },
+  backButtonAbsolute: {
+    position: 'absolute',
+    top: 60,
+    left: 20,
+    padding: 8,
+    zIndex: 20,
+    borderRadius: 8,
+  },
+  footerNote: {
+    marginTop: 16,
+    fontSize: 12,
+    textAlign: 'center',
   },
 });

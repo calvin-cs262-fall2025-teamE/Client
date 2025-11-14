@@ -1,11 +1,15 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const { theme, themeMode, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
 
   const handleSignOut = () => {
@@ -26,221 +30,230 @@ export default function AboutScreen() {
   ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <TouchableOpacity 
-          activeOpacity={0.7} 
-          style={styles.signOutButton}
-          onPress={handleSignOut}
-        >
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.profileSection}>
-          <View style={styles.avatarLarge}>
-            {user?.profileImage ? (
-              <Image 
-                source={{ uri: user.profileImage }} 
-                style={styles.avatarImage}
+    <SafeAreaView style={styles.container}>
+      <LinearGradient
+        colors={theme.colors.background}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.background}
+      >
+        <View style={styles.headerRow}>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Profile</Text>
+          <View style={styles.headerButtons}>
+            <TouchableOpacity 
+              activeOpacity={0.7} 
+              style={[styles.iconButton, { backgroundColor: theme.colors.chip }]}
+              onPress={toggleTheme}
+            >
+              <Ionicons 
+                name={themeMode === 'dark' ? 'sunny' : 'moon'} 
+                size={20} 
+                color={theme.colors.primary} 
               />
-            ) : (
-              <Text style={styles.avatarEmoji}>👤</Text>
-            )}
+            </TouchableOpacity>
+            <TouchableOpacity 
+              activeOpacity={0.7} 
+              style={[styles.signOutButton, { backgroundColor: theme.colors.chip }]}
+              onPress={handleSignOut}
+            >
+              <Ionicons name="log-out-outline" size={22} color={theme.colors.primary} />
+            </TouchableOpacity>
           </View>
-          <Text style={styles.username}>
-            {user ? `${user.firstName} ${user.lastName}` : 'User Name'}
-          </Text>
-          <Text style={styles.bio} numberOfLines={2}>
-            {user?.email || 'Short bio goes here. This is a placeholder for a quick introduction.'}
-          </Text>
-          <TouchableOpacity 
-            activeOpacity={0.8} 
-            style={styles.editButton}
-            onPress={() => router.push('/edit-profile')}
-          >
-            <Text style={styles.editButtonText}>Edit Profile</Text>
-          </TouchableOpacity>
         </View>
 
-        <View style={styles.tabsRow}>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.tabItem, activeTab === 'Posts' && styles.tabItemActive]}
-            onPress={() => setActiveTab('Posts')}
-          >
-            <Text style={[styles.tabText, activeTab === 'Posts' && styles.tabTextActive]}>Posts</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={[styles.tabItem, activeTab === 'Communities' && styles.tabItemActive]}
-            onPress={() => setActiveTab('Communities')}
-          >
-            <Text style={[styles.tabText, activeTab === 'Communities' && styles.tabTextActive]}>Communities</Text>
-          </TouchableOpacity>
-        </View>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={styles.profileSection}>
+            <View style={[styles.avatarLarge, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              {user?.profileImage ? (
+                <Image 
+                  source={{ uri: user.profileImage }} 
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Ionicons name="person" size={48} color={theme.colors.text} />
+              )}
+            </View>
+            <Text style={[styles.username, { color: theme.colors.text }]}>
+              {user ? `${user.firstName} ${user.lastName}` : 'User Name'}
+            </Text>
+            <Text style={[styles.bio, { color: theme.colors.textSecondary }]} numberOfLines={2}>
+              {user?.email || 'Short bio goes here. This is a placeholder for a quick introduction.'}
+            </Text>
+            <TouchableOpacity 
+              activeOpacity={0.8} 
+              style={[styles.editButton, { backgroundColor: theme.colors.primary }]}
+              onPress={() => router.push('/edit-profile')}
+            >
+              <Ionicons name="create-outline" size={18} color="white" style={{ marginRight: 6 }} />
+              <Text style={styles.editButtonText}>Edit Profile</Text>
+            </TouchableOpacity>
+          </View>
 
-        {activeTab === 'Posts' ? (
-          <View style={styles.listContainer}>
-            {posts.map((post) => (
-              <View key={post.id} style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <View style={styles.avatarSmall}>
-                    <Text style={styles.avatarSmallEmoji}>👤</Text>
-                  </View>
-                  <View style={styles.cardHeaderText}>
-                    <Text style={styles.cardTitle}>{post.user}</Text>
-                    <Text style={styles.cardTimestamp}>{post.time}</Text>
-                  </View>
-                </View>
-                <Text style={styles.cardBody}>{post.text}</Text>
-              </View>
-            ))}
+          <View style={[styles.tabsRow, { borderBottomColor: theme.colors.border }]}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.tabItem, activeTab === 'Posts' && { borderBottomColor: theme.colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => setActiveTab('Posts')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'Posts' ? theme.colors.text : theme.colors.textSecondary }]}>Posts</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={[styles.tabItem, activeTab === 'Communities' && { borderBottomColor: theme.colors.primary, borderBottomWidth: 2 }]}
+              onPress={() => setActiveTab('Communities')}
+            >
+              <Text style={[styles.tabText, { color: activeTab === 'Communities' ? theme.colors.text : theme.colors.textSecondary }]}>Communities</Text>
+            </TouchableOpacity>
           </View>
-        ) : (
-          <View style={styles.listContainer}>
-            {communities.map((c) => (
-              <View key={c.id} style={styles.card}>
-                <View style={styles.cardHeader}>
-                  <View style={styles.communityBadge}>
-                    <Text style={styles.communityBadgeText}>#</Text>
+
+          {activeTab === 'Posts' ? (
+            <View style={styles.listContainer}>
+              {posts.map((post) => (
+                <View key={post.id} style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                  <View style={styles.cardHeader}>
+                    <View style={[styles.avatarSmall, { backgroundColor: theme.colors.chip }]}>
+                      <Ionicons name="person" size={18} color={theme.colors.text} />
+                    </View>
+                    <View style={styles.cardHeaderText}>
+                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{post.user}</Text>
+                      <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{post.time}</Text>
+                    </View>
                   </View>
-                  <View style={styles.cardHeaderText}>
-                    <Text style={styles.cardTitle}>{c.name}</Text>
-                    <Text style={styles.cardTimestamp}>{c.members} members</Text>
-                  </View>
+                  <Text style={[styles.cardBody, { color: theme.colors.text }]}>{post.text}</Text>
                 </View>
-              </View>
-            ))}
-          </View>
-        )}
-      </ScrollView>
-    </View>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.listContainer}>
+              {communities.map((c) => (
+                <TouchableOpacity key={c.id} style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+                  <View style={styles.cardHeader}>
+                    <View style={[styles.communityBadge, { backgroundColor: theme.colors.chip }]}>
+                      <Ionicons name="people" size={20} color={theme.colors.primary} />
+                    </View>
+                    <View style={styles.cardHeaderText}>
+                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{c.name}</Text>
+                      <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{c.members} members</Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
+        </ScrollView>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
-
-const LIGHT_BLUE = '#ADD8E6';
-const DARK_BLUE = '#003366';
-const WHITE = '#FFFFFF';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: LIGHT_BLUE,
+  },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingTop: 16,
     paddingBottom: 8,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: DARK_BLUE,
+  },
+  headerButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  iconButton: {
+    padding: 8,
+    borderRadius: 8,
   },
   signOutButton: {
     padding: 8,
-    borderRadius: 6,
-  },
-  signOutText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: DARK_BLUE,
+    borderRadius: 8,
   },
   scrollContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingBottom: 24,
   },
   profileSection: {
     alignItems: 'center',
     marginTop: 8,
-    marginBottom: 16,
+    marginBottom: 20,
   },
   avatarLarge: {
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: DARK_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
   },
   avatarImage: {
     width: 96,
     height: 96,
     borderRadius: 48,
   },
-  avatarEmoji: {
-    fontSize: 44,
-    color: WHITE,
-  },
   username: {
     marginTop: 12,
     fontSize: 20,
     fontWeight: '700',
-    color: DARK_BLUE,
   },
   bio: {
     marginTop: 6,
     fontSize: 14,
-    color: DARK_BLUE,
     textAlign: 'center',
     paddingHorizontal: 16,
   },
   editButton: {
-    marginTop: 12,
-    backgroundColor: DARK_BLUE,
-    paddingHorizontal: 16,
+    marginTop: 14,
+    paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   editButtonText: {
-    color: WHITE,
+    color: '#FFFFFF',
     fontWeight: '600',
+    fontSize: 15,
   },
   tabsRow: {
     flexDirection: 'row',
     marginTop: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: LIGHT_BLUE,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 3,
+    paddingVertical: 12,
+    borderBottomWidth: 2,
     borderBottomColor: 'transparent',
-  },
-  tabItemActive: {
-    borderBottomColor: DARK_BLUE,
   },
   tabText: {
     fontSize: 16,
-    color: 'rgba(0, 51, 102, 0.65)',
     fontWeight: '600',
   },
-  tabTextActive: {
-    color: DARK_BLUE,
-  },
   listContainer: {
-    marginTop: 12,
+    marginTop: 16,
     gap: 12,
   },
   card: {
-    backgroundColor: WHITE,
-    borderWidth: 1,
-    borderColor: LIGHT_BLUE,
-    borderRadius: 10,
-    padding: 12,
-    // Subtle shadow (Android + iOS)
-    shadowColor: DARK_BLUE,
-    shadowOpacity: 0.08,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 3 },
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
+    padding: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 2,
   },
   cardHeader: {
@@ -252,43 +265,31 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: DARK_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-  },
-  avatarSmallEmoji: {
-    fontSize: 18,
-    color: WHITE,
   },
   cardHeaderText: {
     flex: 1,
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: '700',
-    color: DARK_BLUE,
+    fontWeight: '600',
   },
   cardTimestamp: {
     marginTop: 2,
     fontSize: 12,
-    color: 'rgba(0, 51, 102, 0.7)',
   },
   cardBody: {
     fontSize: 14,
-    color: DARK_BLUE,
+    lineHeight: 20,
   },
   communityBadge: {
     width: 36,
     height: 36,
     borderRadius: 8,
-    backgroundColor: LIGHT_BLUE,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
-  },
-  communityBadgeText: {
-    color: WHITE,
-    fontWeight: '900',
   },
 });

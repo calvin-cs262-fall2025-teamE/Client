@@ -19,6 +19,7 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
 interface PostContextType {
     posts: Post[]; // This will work in with out schema
     deletePost: (id: number) => void;
+    addPost: (post: Omit<Post, 'id' | 'timePosted'>) => void;
 }
 
 /**
@@ -64,10 +65,25 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         setPosts((prevItems) => prevItems.filter((post) => post.id !== id));
     }, []); // Empty dependency array - function doesn't depend on any props or state
 
+    /**
+     * Adds a new post to the list
+     */
+    const addPost = React.useCallback((post: Omit<Post, 'id' | 'timePosted'>) => {
+        setPosts((prevPosts) => [
+            {
+                ...post,
+                id: Math.max(...prevPosts.map(p => p.id), 0) + 1,
+                timePosted: new Date(),
+            },
+            ...prevPosts,
+        ]);
+    }, []);
+
     // Context value object containing all state and actions
     const value: PostContextType = {
         posts,
         deletePost,
+        addPost,
     };
 
     return <PostContext.Provider value={value}>{children}</PostContext.Provider>;
