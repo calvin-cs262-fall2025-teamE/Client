@@ -2,10 +2,14 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from './AuthContext';
 
 export default function EditProfileScreen() {
+  const { theme } = useTheme();
   const router = useRouter();
   const { user, updateUser } = useAuth();
 
@@ -62,99 +66,107 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backButtonText}>Cancel</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Profile</Text>
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={styles.saveButtonText}>Save</Text>
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.avatarSection}>
-          <View style={styles.avatarLarge}>
-            {user?.profileImage ? (
-              <Image 
-                source={{ uri: user.profileImage }} 
-                style={styles.avatarImage}
-              />
-            ) : (
-              <Text style={styles.avatarEmoji}>👤</Text>
-            )}
-          </View>
-          <TouchableOpacity style={styles.changePhotoButton} onPress={pickImage}>
-            <Text style={styles.changePhotoText}>Change Photo</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <LinearGradient
+        colors={theme.colors.background}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.background}
+      >
+        <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="close" size={24} color={theme.colors.text} />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Edit Profile</Text>
+          <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+            <Ionicons name="checkmark" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>
 
-        <View style={styles.formSection}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="First Name"
-              placeholderTextColor="#999"
-              value={firstName}
-              onChangeText={setFirstName}
-              autoCapitalize="words"
-            />
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <View style={[styles.avatarSection, { backgroundColor: theme.colors.surface }]}>
+            <View style={[styles.avatarLarge, { backgroundColor: theme.colors.chip, borderColor: theme.colors.border }]}>
+              {user?.profileImage ? (
+                <Image 
+                  source={{ uri: user.profileImage }} 
+                  style={styles.avatarImage}
+                />
+              ) : (
+                <Ionicons name="person" size={48} color={theme.colors.text} />
+              )}
+            </View>
+            <TouchableOpacity style={[styles.changePhotoButton, { backgroundColor: theme.colors.chip }]} onPress={pickImage}>
+              <Ionicons name="camera" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+              <Text style={[styles.changePhotoText, { color: theme.colors.primary }]}>Change Photo</Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Last Name"
-              placeholderTextColor="#999"
-              value={lastName}
-              onChangeText={setLastName}
-              autoCapitalize="words"
-            />
-          </View>
+          <View style={[styles.formSection, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>First Name</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text, backgroundColor: theme.colors.surface }]}
+                placeholder="First Name"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={firstName}
+                onChangeText={setFirstName}
+                autoCapitalize="words"
+              />
+            </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="you@example.com"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Last Name</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text, backgroundColor: theme.colors.surface }]}
+                placeholder="Last Name"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={lastName}
+                onChangeText={setLastName}
+                autoCapitalize="words"
+              />
+            </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Phone (optional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="+1 (555) 123-4567"
-              placeholderTextColor="#999"
-              value={phone}
-              onChangeText={setPhone}
-              keyboardType="phone-pad"
-            />
-          </View>
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Email</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text, backgroundColor: theme.colors.surface }]}
+                placeholder="you@example.com"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Bio (optional)</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Tell us about yourself..."
-              placeholderTextColor="#999"
-              value={bio}
-              onChangeText={setBio}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Phone (optional)</Text>
+              <TextInput
+                style={[styles.input, { borderColor: theme.colors.border, color: theme.colors.text, backgroundColor: theme.colors.surface }]}
+                placeholder="+1 (555) 123-4567"
+                placeholderTextColor={theme.colors.textSecondary}
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+              />
+            </View>
+
+            <View style={styles.formGroup}>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Bio (optional)</Text>
+              <TextInput
+                style={[styles.input, styles.textArea, { borderColor: theme.colors.border, color: theme.colors.text, backgroundColor: theme.colors.surface }]}
+                placeholder="Tell us about yourself..."
+                placeholderTextColor={theme.colors.textSecondary}
+                value={bio}
+                onChangeText={setBio}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </LinearGradient>
     </SafeAreaView>
   );
 }
@@ -162,7 +174,11 @@ export default function EditProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+  },
+  background: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
   },
   header: {
     flexDirection: 'row',
@@ -170,32 +186,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   backButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  backButtonText: {
-    color: '#007BFF',
-    fontSize: 16,
-    fontWeight: '600',
+    padding: 4,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#003366',
   },
   saveButton: {
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-  },
-  saveButtonText: {
-    color: '#007BFF',
-    fontSize: 16,
-    fontWeight: '700',
+    padding: 4,
   },
   scrollContent: {
     paddingBottom: 32,
@@ -203,38 +204,39 @@ const styles = StyleSheet.create({
   avatarSection: {
     alignItems: 'center',
     paddingVertical: 24,
-    backgroundColor: '#fff',
     marginBottom: 16,
   },
   avatarLarge: {
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: '#003366',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
   },
   avatarImage: {
     width: 96,
     height: 96,
     borderRadius: 48,
   },
-  avatarEmoji: {
-    fontSize: 44,
-    color: '#fff',
-  },
   changePhotoButton: {
     marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
   },
   changePhotoText: {
-    color: '#007BFF',
     fontSize: 15,
     fontWeight: '600',
   },
   formSection: {
-    backgroundColor: '#fff',
     paddingHorizontal: 16,
     paddingVertical: 12,
+    borderRadius: 16,
+    marginHorizontal: 16,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   formGroup: {
     marginBottom: 20,
@@ -242,18 +244,14 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 8,
   },
   input: {
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
     paddingHorizontal: 14,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#111',
-    backgroundColor: '#fafafa',
   },
   textArea: {
     height: 100,
