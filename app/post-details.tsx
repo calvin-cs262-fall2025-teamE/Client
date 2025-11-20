@@ -12,30 +12,31 @@ export default function PostDetails() {
     const { id } = useLocalSearchParams(); // We want to send the id of the post through the route params
     const router = useRouter();
     const [replyText, setReplyText] = useState('');
+    const [replying, setReplying] = useState(false);
 
     const { posts } = usePostContext();
 
-    let replying = false;
 
     // If no posts are found we default to using the default post
     // The || operator in typescript handles this for us
     const selectedPost: Post = posts.find(post => post.id.toString() === id) || defaultPost;
 
     return (
+
         <ScrollView style={[commonStyles.container, { backgroundColor: theme.colors.background }]}>
             <View>
                 {/* TODO: Update this to get the author's name. Do this once the service is up and running. */}
-                <Text>On {selectedPost.timePosted.toDateString()}, {selectedPost.authorId} asked: </Text>
-                <Text style={[commonStyles.titleText, {color: theme.colors.textPrimary}]}>{selectedPost.title}</Text>
-                <Text>{selectedPost.content}</Text>
+                <Text style={{color: theme.colors.textPrimary}}>On {selectedPost.timePosted.toDateString()}, {selectedPost.authorId} asked: </Text>
+                <Text style={[commonStyles.titleText, {color: theme.colors.textPrimary, margin: 14}]}>{selectedPost.title}</Text>
+                <Text style={{color: theme.colors.textPrimary}}>{selectedPost.content}</Text>
 
-                <Button style={{ backgroundColor: theme.colors.primary }} onPressOut={() => replying = !replying}>Reply</Button>
+                <Button style={[ commonStyles.button, { backgroundColor: theme.colors.primary }]} onPressOut={() => setReplying(!replying)}>Reply</Button>
 
                 {replying &&
                     <TextInput
                         placeholder='Share your insight'
                         placeholderTextColor={theme.colors.textSecondary}
-                        style={[commonStyles.text_field, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, color: theme.colors.text }]}
+                        style={[commonStyles.text_field, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, color: theme.colors.textPrimary }]}
                         value={replyText}
                         onChangeText={setReplyText}
                         multiline

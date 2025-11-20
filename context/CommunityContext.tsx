@@ -59,9 +59,9 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
         communityName: "KE",
         description: "The Knollcrest-East appartments at Calvin University",
         location: "Calvin University Knollcrest Campus",
-    }]); // Hard-coded default communities
+    }
+]); // Hard-coded default communities
 
-    // , "BHT", "BV", "KE", "SE"
     /**
      * Removes an item from the list by filtering out the matching ID
      *
