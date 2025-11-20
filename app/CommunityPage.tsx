@@ -134,7 +134,7 @@ export default function RVD() {
         </ScrollView>
 
         {/* Feed */}
-        <FlatList
+        {/* <FlatList
           data={POSTS}
           keyExtractor={item => item.id}
           showsVerticalScrollIndicator={false}
@@ -151,6 +151,40 @@ export default function RVD() {
                 {item.image && (
                   <Image source={item.image} style={[styles.postImage, { backgroundColor: theme.colors.chip }]} resizeMode="cover" />
                 )}
+                <View style={styles.postActions}>
+                  <TouchableOpacity style={styles.actionBtn}>
+                    <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.actionBtn}>
+                    <Ionicons name="repeat-outline" size={20} color={theme.colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.actionBtn}>
+                    <Ionicons name="heart-outline" size={20} color={theme.colors.textSecondary} />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.actionBtn}>
+                    <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          )}
+        /> */}
+
+        {/* Feed */}
+        <FlatList
+          data={thesePosts}
+          keyExtractor={item => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 90 }}
+          renderItem={({ item }) => (
+            <View style={[styles.postCard, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
+              {/* <Image source={item.user.avatar} style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]} /> */}
+              <View style={{ flex: 1 }}>
+                <View style={styles.postHeader}>
+                  <Text style={[styles.postName, { color: theme.colors.text }]}>{item.authorId}</Text>
+                  {/* <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>{item.user.handle} · {item.time}</Text> */}
+                </View>
+                <Text style={[styles.postText, { color: theme.colors.text }]}>{item.title}</Text>
                 <View style={styles.postActions}>
                   <TouchableOpacity style={styles.actionBtn}>
                     <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
