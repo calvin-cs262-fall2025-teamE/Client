@@ -26,7 +26,7 @@ export default function PostDetails() {
             <View>
                 {/* TODO: Update this to get the author's name. Do this once the service is up and running. */}
                 <Text>On {selectedPost.timePosted.toDateString()}, {selectedPost.authorId} asked: </Text>
-                <Text style={commonStyles.titleText}>{selectedPost.title}</Text>
+                <Text style={[commonStyles.titleText, {color: theme.colors.textPrimary}]}>{selectedPost.title}</Text>
                 <Text>{selectedPost.content}</Text>
 
                 <Button style={{ backgroundColor: theme.colors.primary }} onPressOut={() => replying = !replying}>Reply</Button>

@@ -1,9 +1,9 @@
+import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { useTheme } from "@/context/ThemeContext";
 
 export default function HomeScreen() {
   const { theme } = useTheme();
@@ -61,7 +61,11 @@ export default function HomeScreen() {
                 .map((item) => (
                   <TouchableOpacity
                     key={item}
-                    onPress={() => router.push(`/${item}` as any)}
+                    onPress={() => router.push({
+                     pathname: `/CommunityPage`,
+                     params: {id: "0"},
+                    })}
+                    
                     style={styles.suggestion}
                   >
                     <Text style={[styles.suggestionText, { color: theme.colors.text }]}>{item}</Text>

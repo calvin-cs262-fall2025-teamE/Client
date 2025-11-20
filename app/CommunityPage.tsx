@@ -4,7 +4,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { Community, defaultCommunity } from "@/types/Community";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
   Dimensions,
@@ -40,56 +40,19 @@ const USERS = [
   { name: "Frank", handle: "@frank", avatar: AVATARS[5] },
 ];
 
-const POSTS = [
-  {
-    id: "1",
-    user: USERS[0],
-    time: "2m",
-    text: "Just started a new React Native project! 🚀",
-    image: null,
-  },
-  {
-    id: "2",
-    user: USERS[1],
-    time: "5m",
-    text: "Check out this beautiful sunset!",
-    image: require("../assets/images/android-icon-background.png"),
-  },
-  {
-    id: "3",
-    user: USERS[2],
-    time: "10m",
-    text: "Dogs make everything better 🐶",
-    image: require("../assets/images/android-icon-foreground.png"),
-  },
-  {
-    id: "4",
-    user: USERS[3],
-    time: "15m",
-    text: "Nature walks are the best therapy.",
-    image: require("../assets/images/splash-icon.png"),
-  },
-  {
-    id: "5",
-    user: USERS[4],
-    time: "20m",
-    text: "Working on a cool new app idea!",
-    image: null,
-  },
-];
-
 export default function RVD() {
   // Steps to find the current context:
   const { id } = useLocalSearchParams();
   const { communities } = useCommunityContext();
+  const router = useRouter();
 
   const selectedCommunity: Community = communities.find(comm => comm.communityID.toString() === id) || defaultCommunity;
-
   const { posts } = usePostContext();
 
   const thesePosts = posts.filter((post) => post.communityId.toString() === id)
 
   const { theme } = useTheme();
+  
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <LinearGradient
@@ -177,30 +140,37 @@ export default function RVD() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 90 }}
           renderItem={({ item }) => (
-            <View style={[styles.postCard, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
-              {/* <Image source={item.user.avatar} style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]} /> */}
-              <View style={{ flex: 1 }}>
-                <View style={styles.postHeader}>
-                  <Text style={[styles.postName, { color: theme.colors.text }]}>{item.authorId}</Text>
-                  {/* <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>{item.user.handle} · {item.time}</Text> */}
-                </View>
-                <Text style={[styles.postText, { color: theme.colors.text }]}>{item.title}</Text>
-                <View style={styles.postActions}>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="repeat-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="heart-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push({
+                pathname: "./post-details",
+                params: { id: item.id } // Here is an example of parameters
+            })}
+            >
+              <View style={[styles.postCard, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
+                {/* <Image source={item.user.avatar} style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]} /> */}
+                <View style={{ flex: 1 }}>
+                  <View style={styles.postHeader}>
+                    <Text style={[styles.postName, { color: theme.colors.text }]}>{item.authorId}</Text>
+                    {/* <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>{item.user.handle} · {item.time}</Text> */}
+                  </View>
+                  <Text style={[styles.postText, { color: theme.colors.text }]}>{item.title}</Text>
+                  <View style={styles.postActions}>
+                    <TouchableOpacity style={styles.actionBtn}>
+                      <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.actionBtn}>
+                      <Ionicons name="repeat-outline" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.actionBtn}>
+                      <Ionicons name="heart-outline" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.actionBtn}>
+                      <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
+            </TouchableOpacity>
           )}
         />
 
