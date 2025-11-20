@@ -46,4 +46,11 @@ export const commonStyles = StyleSheet.create({
     headerStyle: {
         backgroundColor: '#FF9176',
     },
+    text_field: {
+        padding: 14,
+        borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: 12,
+        fontSize: 16,
+        minHeight: 50,
+    },
 });

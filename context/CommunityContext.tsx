@@ -5,7 +5,7 @@
  * Will later need to be updated to correctly use the data service
  */
 
-import { Community, defaultCommunity } from "@/types/Community";
+import { Community } from "@/types/Community";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 /**
@@ -36,7 +36,31 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     // Initialize items from imported JSON data
-    const [communities, setCommunities] = useState<Community[]>([defaultCommunity]); // Just adds the default community by default
+    const [communities, setCommunities] = useState<Community[]>([{
+        communityID: 0,
+        communityName: "RVD",
+        description: "The Rooks-Van Dellen Hall at Calvin University",
+        location: "Calvin University Knollcrest Campus",
+    },
+    {
+        communityID: 1,
+        communityName: "BHT",
+        description: "The Bolt-Heyns-Timmer Hall at Calvin University",
+        location: "Calvin University Knollcrest Campus",
+    },
+    {
+        communityID: 2,
+        communityName: "BV",
+        description: "The Beets-Veenstra Hall at Calvin University",
+        location: "Calvin University Knollcrest Campus",
+    },
+    {
+        communityID: 3,
+        communityName: "KE",
+        description: "The Knollcrest-East appartments at Calvin University",
+        location: "Calvin University Knollcrest Campus",
+    }
+]); // Hard-coded default communities
 
     /**
      * Removes an item from the list by filtering out the matching ID
