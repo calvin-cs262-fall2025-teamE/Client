@@ -1,3 +1,4 @@
+import { useCommunityContext } from "@/context/CommunityContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -9,8 +10,12 @@ export default function HomeScreen() {
   const { theme } = useTheme();
   const [query, setQuery] = useState("");
   const router = useRouter();
-  const suggestions = ["RVD"];
-  const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
+  // const suggestions = ["RVD"];
+  // const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
+
+  const { communities } = useCommunityContext();
+  const fixedTags = communities.map(comm => comm.communityName); //Extracts all the names from the community array
+  const suggestions = fixedTags; // Currently just a copy
 
   const featured = [
     { key: "RVD", name: "Rodenhouse–Van Dellen", colors: [theme.colors.accent, theme.colors.primary] as [string, string] },
@@ -54,21 +59,21 @@ export default function HomeScreen() {
 
           {query.length > 0 && (
             <View style={[styles.suggestionsContainer, { backgroundColor: theme.colors.surfaceElev, borderColor: theme.colors.border }]}>
-              {suggestions
+              {communities
                 .filter((item) =>
-                  item.toLowerCase().includes(query.toLowerCase())
+                  item.communityName.toLowerCase().includes(query.toLowerCase())
                 )
                 .map((item) => (
                   <TouchableOpacity
-                    key={item}
+                    key={item.communityID}
                     onPress={() => router.push({
                      pathname: `/CommunityPage`,
-                     params: {id: "0"},
+                     params: {id: item.communityID},
                     })}
                     
                     style={styles.suggestion}
                   >
-                    <Text style={[styles.suggestionText, { color: theme.colors.text }]}>{item}</Text>
+                    <Text style={[styles.suggestionText, { color: theme.colors.text }]}>{item.communityName}</Text>
                   </TouchableOpacity>
                 ))}
             </View>
