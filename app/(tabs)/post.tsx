@@ -3,7 +3,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface buttonProps {
@@ -130,12 +130,27 @@ export default function AboutScreen() {
             />
           </View>
 
+          <View style={styles.button_container}>
+            <TouchableOpacity
+             style={[styles.small_button, { backgroundColor: '#f11'}]} 
+            >
+              <Ionicons name="trash" size={14} color="white" style={{ marginRight: 4 }} />
+              <Text style={styles.small_button_text}>Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+             style={[styles.small_button, { backgroundColor: theme.colors.primary }]} 
+            >
+              <Ionicons name="arrow-down" size={14} color="white" style={{ marginRight: 4 }} />
+              <Text style={styles.small_button_text}>Save Draft</Text>
+            </TouchableOpacity>
+          </View>
+
           <TouchableOpacity 
             style={[styles.post_button, { backgroundColor: theme.colors.primary }]}
             onPress={handlePost}
           >
             <Ionicons name="send" size={20} color="white" style={{ marginRight: 8 }} />
-            <Text style={styles.post_button_text}>Post</Text>
+            <Text style={styles.button_text}>Post</Text>
           </TouchableOpacity>
         </ScrollView>
       </LinearGradient>
@@ -215,9 +230,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     elevation: 4,
   },
-  post_button_text: {
+  button_text: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '700',
   },
+  small_button_text: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  small_button: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: StyleSheet.hairlineWidth,
+  }
 });
