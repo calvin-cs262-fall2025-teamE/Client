@@ -175,7 +175,11 @@ export default function RVD() {
         />
 
         {/* Floating Compose Button */}
-        <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} activeOpacity={0.8}>
+        <TouchableOpacity 
+        style={[styles.fab, { backgroundColor: theme.colors.primary }]} 
+        activeOpacity={0.8}
+        onPress={() => router.push({
+                pathname: "./(tabs)/post"})}>
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>
