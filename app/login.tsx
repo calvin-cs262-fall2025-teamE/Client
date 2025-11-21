@@ -1,10 +1,10 @@
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from './AuthContext';
 
 export default function SignInScreen() {
@@ -57,7 +57,7 @@ export default function SignInScreen() {
             pointerEvents="none"
           />
           <Text style={[styles.brand, { color: theme.colors.text, textShadowColor: `${theme.colors.primary}40` }]}>CommUnity</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Welcome back — let's connect you in.</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{`Welcome back — let's connect you in.`}</Text>
         </View>
 
         <View style={[styles.card, { backgroundColor: theme.colors.surface, shadowColor: theme.colors.primary, borderColor: `${theme.colors.primary}20` }]}>
