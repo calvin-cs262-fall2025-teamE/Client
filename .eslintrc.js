@@ -20,5 +20,6 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'linebreak-style': ['error', 'windows'],
   },
 };
