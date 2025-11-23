@@ -5,8 +5,10 @@
  * Will later need to be updated to correctly use the data service
  */
 
-import { Community } from "@/types/Community";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import { Community } from '@/types/Community';
+import React, {
+    createContext, ReactNode, useContext, useState,
+} from 'react';
 
 /**
  * This context type defines the shape of the context value that includes
@@ -33,51 +35,51 @@ export const CommunityContext = createContext<CommunityContextType | undefined>(
  *
  */
 export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
-    children,
+  children,
 }) => {
-    // Initialize items from imported JSON data
-    const [communities, setCommunities] = useState<Community[]>([{
-        communityID: 0,
-        communityName: "RVD",
-        description: "The Rooks-Van Dellen Hall at Calvin University",
-        location: "Calvin University Knollcrest Campus",
-    },
-    {
-        communityID: 1,
-        communityName: "BHT",
-        description: "The Bolt-Heyns-Timmer Hall at Calvin University",
-        location: "Calvin University Knollcrest Campus",
-    },
-    {
-        communityID: 2,
-        communityName: "BV",
-        description: "The Beets-Veenstra Hall at Calvin University",
-        location: "Calvin University Knollcrest Campus",
-    },
-    {
-        communityID: 3,
-        communityName: "KE",
-        description: "The Knollcrest-East appartments at Calvin University",
-        location: "Calvin University Knollcrest Campus",
-    }
-]); // Hard-coded default communities
+  // Initialize items from imported JSON data
+  const [communities, setCommunities] = useState<Community[]>([{
+    communityID: 0,
+    communityName: 'RVD',
+    description: 'The Rooks-Van Dellen Hall at Calvin University',
+    location: 'Calvin University Knollcrest Campus',
+  },
+  {
+    communityID: 1,
+    communityName: 'BHT',
+    description: 'The Bolt-Heyns-Timmer Hall at Calvin University',
+    location: 'Calvin University Knollcrest Campus',
+  },
+  {
+    communityID: 2,
+    communityName: 'BV',
+    description: 'The Beets-Veenstra Hall at Calvin University',
+    location: 'Calvin University Knollcrest Campus',
+  },
+  {
+    communityID: 3,
+    communityName: 'KE',
+    description: 'The Knollcrest-East appartments at Calvin University',
+    location: 'Calvin University Knollcrest Campus',
+  },
+  ]); // Hard-coded default communities
 
-    /**
+  /**
      * Removes an item from the list by filtering out the matching ID
      *
      * Almost got this working, but it's only necessary for out Communitys
      */
-    const deleteCommunity = React.useCallback((id: number) => {
-        setCommunities((prevItems) => prevItems.filter((community) => community.communityID !== id));
-    }, []); // Empty dependency array - function doesn't depend on any props or state
+  const deleteCommunity = React.useCallback((id: number) => {
+    setCommunities((prevItems) => prevItems.filter((community) => community.communityID !== id));
+  }, []); // Empty dependency array - function doesn't depend on any props or state
 
-    // Context value object containing all state and actions
-    const value: CommunityContextType = {
-        communities,
-        deleteCommunity,
-    };
+  // Context value object containing all state and actions
+  const value: CommunityContextType = {
+    communities,
+    deleteCommunity,
+  };
 
-    return <CommunityContext.Provider value={value}>{children}</CommunityContext.Provider>;
+  return <CommunityContext.Provider value={value}>{children}</CommunityContext.Provider>;
 };
 
 /**
@@ -85,16 +87,16 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
  *
  * It handles the null check and provides a helpful error message if used
  * outside of ItemProvider. This eliminates boilerplate in components.
- * 
+ *
  * Copied from lab05
  *
  * @returns The context value containing items and deleteItem function
  * @throws Error if used outside of ItemProvider
  */
 export const useCommunityContext = () => {
-    const context = useContext(CommunityContext);
-    if (!context) {
-        throw new Error("useCommunityContext must be used within an CommunityProvider");
-    }
-    return context;
+  const context = useContext(CommunityContext);
+  if (!context) {
+    throw new Error('useCommunityContext must be used within an CommunityProvider');
+  }
+  return context;
 };
