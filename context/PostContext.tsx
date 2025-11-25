@@ -36,7 +36,8 @@ export const PostContext = createContext<PostContextType | undefined>(undefined)
 export const PostProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    // Initialize items from imported JSON data
+    // Initialize items as hard-coded for testing purposes
+    // When we get this from the data service we should order them by date
     const [posts, setPosts] = useState<Post[]>([
         {id: 1,
         type: 'question',
@@ -44,8 +45,8 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         authorId: 0,
         communityId: 0,
         upvotes: 16,
-        timePosted: new Date(),
-        content: "This is the default post",},
+        timePosted: new Date(2024, 11, 5, 13, 12, 51, 234),
+        content: 'This is the default post',},
         {id: 2,
         type: 'question',
         title: 'Is it true that there is a fire drill later today?',
@@ -53,7 +54,23 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         communityId: 0,
         upvotes: 2,
         timePosted: new Date(),
-        content: "This is the default post",}
+        content: 'My roommate said this, but I have no idea if it\'s true.',},
+        {id: 3,
+        type: 'question',
+        title: 'Have people had success making pound cake in these dorms?',
+        authorId: 0,
+        communityId: 2,
+        upvotes: 1,
+        timePosted: new Date(),
+        content: 'Was wondering if the dorm kitchens have served people well in the past',},
+        {id: 4,
+        type: 'advice',
+        title: 'Do not try to grow a tomato plant in the dorms',
+        authorId: 0,
+        communityId: 1,
+        upvotes: 5,
+        timePosted: new Date(2025, 9, 7, 4, 3, 24, 952),
+        content: 'I tried it and it died',},
     ]);
 
     /**

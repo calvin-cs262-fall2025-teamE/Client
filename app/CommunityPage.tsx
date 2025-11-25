@@ -67,8 +67,8 @@ export default function RVD() {
             <Ionicons name="menu" size={26} color={theme.colors.text} />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>RVD</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>Rodenhouse–Van Dellen</Text>
+            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{selectedCommunity.communityName}</Text>
+            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{selectedCommunity.description}</Text>
           </View>
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="sparkles" size={24} color={theme.colors.primary} />

@@ -14,8 +14,8 @@ export default function HomeScreen() {
   // const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
 
   const { communities } = useCommunityContext();
-  const fixedTags = communities.map(comm => comm.communityName); //Extracts all the names from the community array
-  const suggestions = fixedTags; // Currently just a copy
+  // const fixedTags = communities.map(comm => comm.communityName); //Extracts all the names from the community array
+  // const suggestions = fixedTags; // Currently just a copy
 
   const featured = [
     { key: "RVD", name: "Rodenhouse–Van Dellen", colors: [theme.colors.accent, theme.colors.primary] as [string, string] },
@@ -87,20 +87,24 @@ export default function HomeScreen() {
               contentContainerStyle={{ paddingHorizontal: 10 }}
             >
               <View style={styles.tagsRow}>
-                {fixedTags.map((tag) => (
+                {communities.map((community) => (
                   <TouchableOpacity
-                    key={tag}
-                    onPress={() => router.push(`/${tag}` as any)}
+                    key={community.communityID}
+                    onPress={() => router.push({
+                     pathname: `/CommunityPage`,
+                     params: {id: community.communityID},
+                    })}
                     style={[styles.tagButton, { backgroundColor: theme.colors.chip, borderColor: theme.colors.border }]}
                   >
-                    <Text style={[styles.tagText, { color: theme.colors.text }]}>#{tag}</Text>
+                    <Text style={[styles.tagText, { color: theme.colors.text }]}>#{community.communityName}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>
           </View>
 
-          <View style={styles.section}>
+          {/* I think we need more reasons why to add this */}
+          {/* <View style={styles.section}>
             <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Featured Communities</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
               <View style={styles.cardsRow}>
@@ -118,7 +122,7 @@ export default function HomeScreen() {
                 ))}
               </View>
             </ScrollView>
-          </View>
+          </View> */}
 
         </View>
       </LinearGradient>
