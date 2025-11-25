@@ -88,6 +88,13 @@ export default function AboutScreen() {
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Share your question or advice</Text>
           </View>
 
+          <View>
+            <Text>In community</Text>
+            <Select>
+
+            </Select>
+          </View>
+
           <View style={styles.section}>
             <Text style={[styles.label, { color: theme.colors.text }]}>Post Type</Text>
             <View style={styles.button_container}>

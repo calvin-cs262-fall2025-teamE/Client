@@ -7,7 +7,7 @@ interface User {
   lastName: string;
   phone?: string;
   profileImage?: string | null;
-  communities?: number[];
+  communities?: string[];
 }
 
 interface AuthContextType {
@@ -24,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const signIn = (userData: User) => {
-    setUser({...userData, communities: [0, 1, 3]}); //Adding hard-coded communities
+    setUser({...userData, communities: ['0', '1', '3']}); //Adding hard-coded communities
   };
 
   const signOut = () => {

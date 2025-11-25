@@ -91,7 +91,7 @@ export default function HomeScreen() {
                   <TouchableOpacity
                     key={community.communityID}
                     onPress={() => router.push({
-                     pathname: `/CommunityPage`,
+                     pathname: `/join-redirect`,
                      params: {id: community.communityID},
                     })}
                     style={[styles.tagButton, { backgroundColor: theme.colors.chip, borderColor: theme.colors.border }]}
