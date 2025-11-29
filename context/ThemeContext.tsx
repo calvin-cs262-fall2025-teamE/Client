@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -41,16 +41,16 @@ interface ThemeContextType {
 
 const darkTheme: Theme = {
   colors: {
-    background: ["#0a0c10", "#0d0f14", "#111318"],
-    surface: "#1c2028",
-    surfaceElev: "#252932",
+    background: ["#000000", "#000000", "#000000"],
+    surface: "#000000",
+    surfaceElev: "#1a1a1a",
     text: "#FFFFFF",
     textSecondary: "#9CA3AF",
     primary: "#FF9898",
     accent: "#FF9176",
-    border: "#2d3340",
+    border: "#2a2a2a",
     chip: "rgba(255,255,255,0.12)",
-    cardBackground: "#1c2028",
+    cardBackground: "#000000",
   },
   radii: {
     sm: 8,

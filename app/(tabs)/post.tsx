@@ -58,6 +58,11 @@ export default function AboutScreen() {
       authorId: 1, // TODO: Replace with actual user ID from auth context
       communityId: 0, // TODO: Allow user to select community
       upvotes: 0,
+      likes: 0,
+      retweets: 0,
+      shares: 0,
+      likedBy: [],
+      retweetedBy: [],
     });
 
     // Clear form
