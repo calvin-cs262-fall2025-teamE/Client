@@ -1,13 +1,13 @@
 export const theme = {
   colors: {
-    background: "#0f1115",
-    surface: "#1a1f29",
-    surfaceElev: "#202635",
+    background: "#000000",
+    surface: "#000000",
+    surfaceElev: "#1a1a1a",
     textPrimary: "#FFFFFF",
     textSecondary: "#B8C0CC",
     primary: "#FF9898",
     accent: "#FF9176",
-    border: "#2a3140",
+    border: "#2a2a2a",
     chip: "rgba(255,255,255,0.10)",
   },
   radii: {
