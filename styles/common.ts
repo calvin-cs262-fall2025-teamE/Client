@@ -14,7 +14,13 @@ export const commonStyles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+    },
+    background: {
+        flex: 1,
+        width: "100%",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
     },
     listPadding: {
         padding: 16,
@@ -25,6 +31,14 @@ export const commonStyles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         flex: 1,
+        paddingVertical: 16,
+        marginTop: 8,
+        marginBottom: 20,
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        elevation: 4,
     },
     primaryButton: {
         backgroundColor: '#FF9898',
@@ -39,8 +53,10 @@ export const commonStyles = StyleSheet.create({
     },
 
     titleText: {
-        fontSize: 26,
-        color: 'black',
+        fontSize: 28,
+        textAlign: "left",
+        marginBottom: 2,
+        fontWeight: "700",
     },
 
     headerStyle: {

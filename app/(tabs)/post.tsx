@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../AuthContext';
 
 interface buttonProps {
   label?: string,
@@ -43,6 +44,8 @@ export default function AboutScreen() {
   const [questionText, setQuestionText] = useState('');
   const [detailsText, setDetailsText] = useState('');
 
+  const { user } = useAuth();
+
   const handlePost = () => {
     // Validate inputs
     if (!questionText.trim()) {
@@ -55,7 +58,7 @@ export default function AboutScreen() {
       type: currentSelected === 0 ? 'question' : 'advice',
       title: questionText.trim(),
       content: detailsText.trim() || questionText.trim(),
-      authorId: 1, // TODO: Replace with actual user ID from auth context
+      authorId: user!.id, // TODO: Replace with actual user ID from auth context
       communityId: 0, // TODO: Allow user to select community
       upvotes: 0,
     });
@@ -90,9 +93,7 @@ export default function AboutScreen() {
 
           <View>
             <Text>In community</Text>
-            <Select>
-
-            </Select>
+            <input></input>
           </View>
 
           <View style={styles.section}>
@@ -137,7 +138,7 @@ export default function AboutScreen() {
             />
           </View>
 
-          <View style={styles.button_container}>
+          <View style={[styles.button_container, {marginBottom: 30}]}>
             <TouchableOpacity
              style={[styles.small_button, { backgroundColor: '#f11'}]} 
             >
