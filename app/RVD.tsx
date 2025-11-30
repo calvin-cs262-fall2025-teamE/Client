@@ -1,19 +1,24 @@
+import PostCard from "@/components/PostCard";
+import { usePostContext } from "@/context/PostContext";
+import { useTheme } from "@/context/ThemeContext";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
-  Dimensions,
-  FlatList,
-  Image,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Alert,
+    Dimensions,
+    FlatList,
+    Image,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    Share,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/context/ThemeContext";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -76,6 +81,40 @@ const POSTS = [
 
 export default function RVD() {
   const { theme } = useTheme();
+  const { posts, toggleLike, toggleRetweet, sharePost } = usePostContext();
+  const router = useRouter();
+  
+  // Filter posts for RVD community (communityId: 0) or show all if you prefer
+  const rvdPosts = posts; // Shows all posts - change to posts.filter(p => p.communityId === 0) if you want RVD-specific only
+  
+  // Simulated current user ID - replace with actual auth context when available
+  const currentUserId = 1;
+
+  const handleLike = (postId: number) => {
+    console.log('Like clicked for post:', postId);
+    Alert.alert('Like Button', `Clicked like for post ${postId}`);
+    toggleLike(postId, currentUserId);
+  };
+
+  const handleRetweet = (postId: number) => {
+    console.log('Retweet clicked for post:', postId);
+    Alert.alert('Retweet Button', `Clicked retweet for post ${postId}`);
+    toggleRetweet(postId, currentUserId);
+  };
+
+  const handleShare = async (postId: number, postTitle: string) => {
+    console.log('Share clicked for post:', postId);
+    try {
+      await Share.share({
+        message: `Check out this post: ${postTitle}`,
+        title: postTitle,
+      });
+      sharePost(postId);
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+  
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <LinearGradient
@@ -121,43 +160,23 @@ export default function RVD() {
 
         {/* Feed */}
         <FlatList
-          data={POSTS}
-          keyExtractor={item => item.id}
+          data={rvdPosts}
+          keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 90 }}
           renderItem={({ item }) => (
-            <View style={[styles.postCard, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
-              <Image source={item.user.avatar} style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]} />
-              <View style={{ flex: 1 }}>
-                <View style={styles.postHeader}>
-                  <Text style={[styles.postName, { color: theme.colors.text }]}>{item.user.name}</Text>
-                  <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>{item.user.handle} · {item.time}</Text>
-                </View>
-                <Text style={[styles.postText, { color: theme.colors.text }]}>{item.text}</Text>
-                {item.image && (
-                  <Image source={item.image} style={[styles.postImage, { backgroundColor: theme.colors.chip }]} resizeMode="cover" />
-                )}
-                <View style={styles.postActions}>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="repeat-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="heart-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+            <PostCard post={item} currentUserId={currentUserId} />
           )}
         />
 
         {/* Floating Compose Button */}
-        <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} activeOpacity={0.8}>
+        <TouchableOpacity 
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]} 
+          activeOpacity={0.8}
+          onPress={() => router.push({
+            pathname: "./(tabs)/post"
+          })}
+        >
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>
@@ -276,8 +295,16 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   actionBtn: {
-    paddingVertical: 4,
-    paddingHorizontal: 2,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    minWidth: 40,
+  },
+  actionCount: {
+    fontSize: 13,
+    fontWeight: '500',
   },
   fab: {
     position: 'absolute',
