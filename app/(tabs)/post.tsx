@@ -1,10 +1,12 @@
+import { useCommunityContext } from '@/context/CommunityContext';
 import { usePostContext } from '@/context/PostContext';
 import { useTheme } from '@/context/ThemeContext';
+import { Community } from '@/types/Community';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 interface buttonProps {
@@ -40,16 +42,29 @@ export default function AboutScreen() {
   const { theme } = useTheme();
   const { addPost } = usePostContext();
   const router = useRouter();
+
+  // UI information:
   const [currentSelected, setCurrentSelected] = useState(0);
   const [questionText, setQuestionText] = useState('');
   const [detailsText, setDetailsText] = useState('');
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
+  // Contextual information:
   const { user } = useAuth();
+
+  const { id } = useLocalSearchParams();
+  const { communities } = useCommunityContext();
+  const [selectedCommunity, setSelectedCommunity] = useState(communities.find(comm => comm.communityID.toString() === id))
 
   const handlePost = () => {
     // Validate inputs
     if (!questionText.trim()) {
       Alert.alert('Missing Information', 'Please enter your ' + (currentSelected === 0 ? 'question' : 'advice'));
+      return;
+    }
+
+    if (!selectedCommunity) {
+      Alert.alert('Missing Community', 'Please select a community.');
       return;
     }
 
@@ -77,6 +92,10 @@ export default function AboutScreen() {
     ]);
   };
 
+  const handleCommunitySelect = (community: Community) => {
+    setSelectedCommunity(community);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -92,8 +111,32 @@ export default function AboutScreen() {
           </View>
 
           <View>
-            <Text>In community</Text>
-            <input></input>
+            {/* This the code here is copied and modified from this webpage: https://builtin.com/articles/react-native-dropdown */}
+            {/* Credit to Aneeqa Khan */}
+            
+            <TouchableOpacity
+              onPress={() => setDropdownVisible(!isDropdownVisible)}
+              style={[styles.small_button, { backgroundColor: theme.colors.primary }]}
+            >
+              <Text
+                style={{color: theme.colors.text}}
+              >{selectedCommunity?.communityName ? "Posting in " + selectedCommunity.communityName : "Please select a community"}</Text>
+            </TouchableOpacity>
+
+            {isDropdownVisible && (
+              <FlatList
+                data={communities}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleCommunitySelect(item)}
+                  >
+                    <Text style={{color: theme.colors.text}}>{item.communityName}</Text>{" "}
+                  </TouchableOpacity>
+                )}
+              />
+
+            )}
           </View>
 
           <View style={styles.section}>
@@ -154,7 +197,7 @@ export default function AboutScreen() {
           </View>
 
           <TouchableOpacity 
-            style={[styles.post_button, { backgroundColor: theme.colors.primary }]}
+            style={[styles.post_button, { backgroundColor: theme.colors.primary}]}
             onPress={handlePost}
           >
             <Ionicons name="send" size={20} color="white" style={{ marginRight: 8 }} />

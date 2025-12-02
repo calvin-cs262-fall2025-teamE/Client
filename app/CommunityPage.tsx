@@ -179,7 +179,8 @@ export default function RVD() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]} 
         activeOpacity={0.8}
         onPress={() => router.push({
-                pathname: "./(tabs)/post"})}>
+                pathname: "./(tabs)/post",
+                params: {id: selectedCommunity.communityID},})}>
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>
