@@ -1,4 +1,8 @@
-import React from "react";
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import React, { useState } from 'react';
 import {
   Dimensions,
   FlatList,
@@ -9,73 +13,82 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
-} from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/context/ThemeContext";
+  View,
+} from 'react-native';
 
-const windowWidth = Dimensions.get("window").width;
+const windowWidth = Dimensions.get('window').width;
 
 // Placeholder avatars and images
 const AVATARS = [
-  require("../assets/images/react-logo.png"),
-  require("../assets/images/partial-react-logo.png"),
-  require("../assets/images/android-icon-foreground.png"),
-  require("../assets/images/android-icon-background.png"),
-  require("../assets/images/icon.png"),
-  require("../assets/images/splash-icon.png"),
+  require('../assets/images/react-logo.png'),
+  require('../assets/images/partial-react-logo.png'),
+  require('../assets/images/android-icon-foreground.png'),
+  require('../assets/images/android-icon-background.png'),
+  require('../assets/images/icon.png'),
+  require('../assets/images/splash-icon.png'),
 ];
 
 const USERS = [
-  { name: "Alice", handle: "@alice", avatar: AVATARS[0] },
-  { name: "Bob", handle: "@bob", avatar: AVATARS[1] },
-  { name: "Charlie", handle: "@charlie", avatar: AVATARS[2] },
-  { name: "Diana", handle: "@diana", avatar: AVATARS[3] },
-  { name: "Eve", handle: "@eve", avatar: AVATARS[4] },
-  { name: "Frank", handle: "@frank", avatar: AVATARS[5] },
+  { name: 'Alice', handle: '@alice', avatar: AVATARS[0] },
+  { name: 'Bob', handle: '@bob', avatar: AVATARS[1] },
+  { name: 'Charlie', handle: '@charlie', avatar: AVATARS[2] },
+  { name: 'Diana', handle: '@diana', avatar: AVATARS[3] },
+  { name: 'Eve', handle: '@eve', avatar: AVATARS[4] },
+  { name: 'Frank', handle: '@frank', avatar: AVATARS[5] },
 ];
 
-const POSTS = [
+const INITIAL_POSTS = [
   {
-    id: "1",
+    id: '1',
     user: USERS[0],
-    time: "2m",
-    text: "Just started a new React Native project! 🚀",
+    time: '2m',
+    text: 'Just started a new React Native project! 🚀',
     image: null,
+    liked: false,
   },
   {
-    id: "2",
+    id: '2',
     user: USERS[1],
-    time: "5m",
-    text: "Check out this beautiful sunset!",
-    image: require("../assets/images/android-icon-background.png"),
+    time: '5m',
+    text: 'Check out this beautiful sunset!',
+    image: require('../assets/images/android-icon-background.png'),
+    liked: false,
   },
   {
-    id: "3",
+    id: '3',
     user: USERS[2],
-    time: "10m",
-    text: "Dogs make everything better 🐶",
-    image: require("../assets/images/android-icon-foreground.png"),
+    time: '10m',
+    text: 'Dogs make everything better 🐶',
+    image: require('../assets/images/android-icon-foreground.png'),
+    liked: false,
   },
   {
-    id: "4",
+    id: '4',
     user: USERS[3],
-    time: "15m",
-    text: "Nature walks are the best therapy.",
-    image: require("../assets/images/splash-icon.png"),
+    time: '15m',
+    text: 'Nature walks are the best therapy.',
+    image: require('../assets/images/splash-icon.png'),
+    liked: false,
   },
   {
-    id: "5",
+    id: '5',
     user: USERS[4],
-    time: "20m",
-    text: "Working on a cool new app idea!",
+    time: '20m',
+    text: 'Working on a cool new app idea!',
     image: null,
+    liked: false,
   },
 ];
 
 export default function RVD() {
   const { theme } = useTheme();
+  const router = useRouter();
+  const [posts, setPosts] = useState(INITIAL_POSTS);
+
+  const toggleLike = (postID: string) => {
+    setPosts((prev) => prev.map((p) => (p.id === postID ? { ...p, liked: !p.liked } : p)));
+  };
+
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
       <LinearGradient
@@ -84,69 +97,141 @@ export default function RVD() {
         end={{ x: 1, y: 1 }}
         style={styles.background}
       >
-        {/* Top Navigation Bar */}
-        <View style={[styles.headerRow, { borderBottomColor: theme.colors.border, backgroundColor: theme.colors.surface }]}>
+        {/* Header */}
+        <View
+          style={[
+            styles.headerRow,
+            { borderBottomColor: theme.colors.border, backgroundColor: theme.colors.surface },
+          ]}
+        >
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="menu" size={26} color={theme.colors.text} />
           </TouchableOpacity>
+
           <View style={styles.headerCenter}>
             <Text style={[styles.headerTitle, { color: theme.colors.text }]}>RVD</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>Rodenhouse–Van Dellen</Text>
+            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>
+              Rodenhouse–Van Dellen
+            </Text>
           </View>
+
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="sparkles" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>
 
-        {/* Horizontal Avatars */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={[styles.storiesScroll, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]} 
+        {/* Horizontal avatars */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[
+            styles.storiesScroll,
+            { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border },
+          ]}
           contentContainerStyle={styles.storiesContainer}
         >
           <View style={styles.storyAvatarWrapper}>
-            <View style={[styles.storyAvatar, styles.addAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]}>
+            <View
+              style={[
+                styles.storyAvatar,
+                styles.addAvatar,
+                { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip },
+              ]}
+            >
               <Ionicons name="add" size={28} color={theme.colors.primary} />
             </View>
             <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>Add</Text>
           </View>
+
           {USERS.map((user) => (
             <View style={styles.storyAvatarWrapper} key={user.handle}>
-              <Image source={user.avatar} style={[styles.storyAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]} />
-              <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>{user.name.split(" ")[0]}</Text>
+              <Image
+                source={user.avatar}
+                style={[
+                  styles.storyAvatar,
+                  { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip },
+                ]}
+              />
+              <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>
+                {user.name.split(' ')[0]}
+              </Text>
             </View>
           ))}
         </ScrollView>
 
         {/* Feed */}
         <FlatList
-          data={POSTS}
-          keyExtractor={item => item.id}
+          data={posts}
+          keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 90 }}
           renderItem={({ item }) => (
-            <View style={[styles.postCard, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
-              <Image source={item.user.avatar} style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]} />
+            <View
+              style={[
+                styles.postCard,
+                { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border },
+              ]}
+            >
+              <Image
+                source={item.user.avatar}
+                style={[styles.postAvatar, { backgroundColor: theme.colors.chip }]}
+              />
+
               <View style={{ flex: 1 }}>
                 <View style={styles.postHeader}>
-                  <Text style={[styles.postName, { color: theme.colors.text }]}>{item.user.name}</Text>
-                  <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>{item.user.handle} · {item.time}</Text>
+                  <Text style={[styles.postName, { color: theme.colors.text }]}>
+                    {item.user.name}
+                  </Text>
+                  <Text style={[styles.postHandle, { color: theme.colors.textSecondary }]}>
+                    {item.user.handle}
+                    {' '}
+                    ·
+                    {item.time}
+                  </Text>
                 </View>
+
                 <Text style={[styles.postText, { color: theme.colors.text }]}>{item.text}</Text>
+
                 {item.image && (
-                  <Image source={item.image} style={[styles.postImage, { backgroundColor: theme.colors.chip }]} resizeMode="cover" />
+                  <Image
+                    source={item.image}
+                    style={[styles.postImage, { backgroundColor: theme.colors.chip }]}
+                    resizeMode="cover"
+                  />
                 )}
+
+                {/* Post actions */}
                 <View style={styles.postActions}>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="chatbubble-outline" size={20} color={theme.colors.textSecondary} />
+                  {/* Comment */}
+                  <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => router.push(`/comments/${item.id}`)}
+                  >
+                    <Ionicons
+                      name="chatbubble-outline"
+                      size={20}
+                      color={theme.colors.textSecondary}
+                    />
                   </TouchableOpacity>
+
+                  {/* Repost */}
                   <TouchableOpacity style={styles.actionBtn}>
                     <Ionicons name="repeat-outline" size={20} color={theme.colors.textSecondary} />
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionBtn}>
-                    <Ionicons name="heart-outline" size={20} color={theme.colors.textSecondary} />
+
+                  {/* Like */}
+                  <TouchableOpacity
+                    style={styles.actionBtn}
+                    onPress={() => toggleLike(item.id)}
+                  >
+                    <Ionicons
+                      name={item.liked ? 'heart' : 'heart-outline'}
+                      size={20}
+                      color={item.liked ? 'red' : theme.colors.textSecondary}
+                    />
                   </TouchableOpacity>
+
+                  {/* Share */}
                   <TouchableOpacity style={styles.actionBtn}>
                     <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
                   </TouchableOpacity>
@@ -156,8 +241,11 @@ export default function RVD() {
           )}
         />
 
-        {/* Floating Compose Button */}
-        <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} activeOpacity={0.8}>
+        {/* Floating compose button */}
+        <TouchableOpacity
+          style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+          activeOpacity={0.8}
+        >
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>
@@ -172,8 +260,8 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   headerRow: {
     flexDirection: 'row',
@@ -232,7 +320,6 @@ const styles = StyleSheet.create({
   },
   postCard: {
     flexDirection: 'row',
-    marginBottom: 2,
     paddingVertical: 16,
     paddingHorizontal: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -272,12 +359,11 @@ const styles = StyleSheet.create({
   postActions: {
     flexDirection: 'row',
     marginTop: 8,
-    marginBottom: 2,
     gap: 24,
   },
   actionBtn: {
     paddingVertical: 4,
-    paddingHorizontal: 2,
+    paddingHorizontal: 4,
   },
   fab: {
     position: 'absolute',

@@ -1,26 +1,43 @@
-import { useCommunityContext } from "@/context/CommunityContext";
-import { useTheme } from "@/context/ThemeContext";
-import { Ionicons } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
-import { useState } from "react";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { useCommunityContext } from '@/context/CommunityContext';
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
 export default function HomeScreen() {
   const { theme } = useTheme();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const router = useRouter();
-  // const suggestions = ["RVD"];
-  // const fixedTags = ["RVD", "BHT", "BV", "KE", "SE"];
 
   const { communities } = useCommunityContext();
-  const fixedTags = communities.map(comm => comm.communityName); //Extracts all the names from the community array
-  const suggestions = fixedTags; // Currently just a copy
+  const fixedTags = communities.map((comm) => comm.communityName);
 
   const featured = [
-    { key: "RVD", name: "Rodenhouse–Van Dellen", colors: [theme.colors.accent, theme.colors.primary] as [string, string] },
-    { key: "BHT", name: "Bolt–Heyns–TerAvest", colors: ["#6CA0FF", "#9BD0FF"] as [string, string] },
-    { key: "SE", name: "Schultze–Eldersveld", colors: ["#9B8CFF", "#C9BEFF"] as [string, string] },
+    {
+      key: 'RVD',
+      name: 'Rodenhouse–Van Dellen',
+      colors: [theme.colors.accent, theme.colors.primary] as [string, string],
+    },
+    {
+      key: 'BHT',
+      name: 'Bolt–Heyns–TerAvest',
+      colors: ['#6CA0FF', '#9BD0FF'] as [string, string],
+    },
+    {
+      key: 'SE',
+      name: 'Schultze–Eldersveld',
+      colors: ['#9B8CFF', '#C9BEFF'] as [string, string],
+    },
   ];
 
   return (
@@ -34,17 +51,26 @@ export default function HomeScreen() {
         <View style={styles.overlay}>
           <View style={styles.hero}>
             <Text style={[styles.title, { color: theme.colors.text }]}>Welcome</Text>
-            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Find and follow Calvin communities</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+              Find and follow Calvin communities
+            </Text>
           </View>
+
           <LinearGradient
-            colors={[`${theme.colors.accent}55`, "transparent"]}
+            colors={[`${theme.colors.accent}55`, 'transparent']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.heroGlow}
             pointerEvents="none"
           />
 
-          <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          {/* Search bar on Home */}
+          <View
+            style={[
+              styles.searchContainer,
+              { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+            ]}
+          >
             <TextInput
               style={[styles.searchBar, { color: theme.colors.text }]}
               placeholder="Search..."
@@ -52,35 +78,63 @@ export default function HomeScreen() {
               value={query}
               onChangeText={setQuery}
             />
-            <TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.primary }]}>
+            <TouchableOpacity
+              style={[styles.iconButton, { backgroundColor: theme.colors.primary }]}
+              onPress={() => {
+                if (!query.trim()) {
+                  alert('Please enter a search term.');
+                  return;
+                }
+
+                // Try to match a community tag (RVD, BHT, BV, KE, etc.)
+                const target = fixedTags.find(
+                  (tag) => tag.toLowerCase() === query.trim().toLowerCase(),
+                );
+
+                if (target) {
+                  router.push(`/tags/${target}`);
+                  return;
+                }
+
+                alert('No matching community tag found.');
+              }}
+            >
               <Ionicons name="search" size={22} color="white" />
             </TouchableOpacity>
           </View>
 
+          {/* Suggestions dropdown */}
           {query.length > 0 && (
-            <View style={[styles.suggestionsContainer, { backgroundColor: theme.colors.surfaceElev, borderColor: theme.colors.border }]}>
+            <View
+              style={[
+                styles.suggestionsContainer,
+                { backgroundColor: theme.colors.surfaceElev, borderColor: theme.colors.border },
+              ]}
+            >
               {communities
-                .filter((item) =>
-                  item.communityName.toLowerCase().includes(query.toLowerCase())
-                )
+                .filter((item) => item.communityName.toLowerCase().includes(query.toLowerCase()))
                 .map((item) => (
                   <TouchableOpacity
                     key={item.communityID}
                     onPress={() => router.push({
-                     pathname: `/CommunityPage`,
-                     params: {id: item.communityID},
+                      pathname: '/CommunityPage',
+                      params: { id: item.communityID },
                     })}
-                    
                     style={styles.suggestion}
                   >
-                    <Text style={[styles.suggestionText, { color: theme.colors.text }]}>{item.communityName}</Text>
+                    <Text style={[styles.suggestionText, { color: theme.colors.text }]}>
+                      {item.communityName}
+                    </Text>
                   </TouchableOpacity>
                 ))}
             </View>
           )}
 
+          {/* Quick Tags */}
           <View style={styles.tagsContainer}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Quick Tags</Text>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+              Quick Tags
+            </Text>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -90,28 +144,64 @@ export default function HomeScreen() {
                 {fixedTags.map((tag) => (
                   <TouchableOpacity
                     key={tag}
-                    onPress={() => router.push(`/${tag}` as any)}
-                    style={[styles.tagButton, { backgroundColor: theme.colors.chip, borderColor: theme.colors.border }]}
+                    onPress={() => router.push(`/tags/${tag}`)}
+                    style={[
+                      styles.tagButton,
+                      { backgroundColor: theme.colors.chip, borderColor: theme.colors.border },
+                    ]}
                   >
-                    <Text style={[styles.tagText, { color: theme.colors.text }]}>#{tag}</Text>
+                    <Text style={[styles.tagText, { color: theme.colors.text }]}>
+                      #
+                      {tag}
+                    </Text>
                   </TouchableOpacity>
                 ))}
               </View>
             </ScrollView>
           </View>
 
+          {/* Featured communities */}
           <View style={styles.section}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Featured Communities</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 10 }}>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+              Featured Communities
+            </Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 10 }}
+            >
               <View style={styles.cardsRow}>
                 {featured.map((c) => (
-                  <TouchableOpacity key={c.key} onPress={() => router.push(`/${c.key}` as any)} activeOpacity={0.9} style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-                    <LinearGradient colors={c.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.cardAccent} />
+                  <TouchableOpacity
+                    key={c.key}
+                    onPress={() => router.push(`/${c.key}` as any)}
+                    activeOpacity={0.9}
+                    style={[
+                      styles.card,
+                      { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                    ]}
+                  >
+                    <LinearGradient
+                      colors={c.colors}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.cardAccent}
+                    />
                     <View style={styles.cardBody}>
-                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{c.name}</Text>
-                      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-                        <Text style={[styles.cardMeta, { color: theme.colors.textSecondary }]}>Tap to explore</Text>
-                        <Ionicons name="arrow-forward" size={16} color={theme.colors.textSecondary} />
+                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
+                        {c.name}
+                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text
+                          style={[styles.cardMeta, { color: theme.colors.textSecondary }]}
+                        >
+                          Tap to explore
+                        </Text>
+                        <Ionicons
+                          name="arrow-forward"
+                          size={16}
+                          color={theme.colors.textSecondary}
+                        />
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -119,7 +209,6 @@ export default function HomeScreen() {
               </View>
             </ScrollView>
           </View>
-
         </View>
       </LinearGradient>
     </SafeAreaView>
@@ -127,31 +216,29 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   background: {
     flex: 1,
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   overlay: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
     padding: 20,
     borderRadius: 16,
-    width: "92%",
-    alignItems: "center",
-    position: "relative",
+    width: '92%',
+    alignItems: 'center',
+    position: 'relative',
   },
   hero: {
-    width: "100%",
+    width: '100%',
     gap: 6,
     marginBottom: 10,
   },
   heroGlow: {
-    position: "absolute",
+    position: 'absolute',
     top: -20,
     left: -10,
     width: 220,
@@ -161,22 +248,22 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    textAlign: "left",
+    textAlign: 'left',
     marginBottom: 2,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   subtitle: {
     fontSize: 15,
-    textAlign: "left",
+    textAlign: 'left',
     marginBottom: 16,
   },
   searchContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     borderRadius: 14,
-    width: "100%",
+    width: '100%',
     marginBottom: 16,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOpacity: 0.12,
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 2 },
@@ -194,11 +281,11 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 14,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tagsContainer: {
-    width: "100%",
+    width: '100%',
     marginBottom: 12,
   },
   sectionLabel: {
@@ -207,7 +294,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   tagsRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 10,
     paddingVertical: 6,
   },
@@ -215,9 +302,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 999,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
@@ -225,14 +312,14 @@ const styles = StyleSheet.create({
   },
   tagText: {
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   section: {
-    width: "100%",
+    width: '100%',
     marginTop: 4,
   },
   cardsRow: {
-    flexDirection: "row",
+    flexDirection: 'row',
     gap: 12,
     paddingVertical: 6,
   },
@@ -241,28 +328,28 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 16,
     borderWidth: StyleSheet.hairlineWidth,
-    overflow: "hidden",
+    overflow: 'hidden',
   },
   cardAccent: {
     height: 48,
-    width: "100%",
+    width: '100%',
     opacity: 0.6,
   },
   cardBody: {
     flex: 1,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   cardTitle: {
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   cardMeta: {
     fontSize: 13,
   },
   suggestionsContainer: {
-    width: "100%",
+    width: '100%',
     borderRadius: 12,
     padding: 6,
     borderWidth: StyleSheet.hairlineWidth,
@@ -270,10 +357,9 @@ const styles = StyleSheet.create({
   suggestion: {
     paddingVertical: 12,
     paddingHorizontal: 12,
-    backgroundColor: "transparent",
     borderRadius: 8,
     marginTop: 4,
-    width: "100%",
+    width: '100%',
   },
   suggestionText: {
     fontSize: 16,
