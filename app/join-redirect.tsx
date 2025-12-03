@@ -46,14 +46,16 @@ export default function joinPage() {
               pathname: `/CommunityPage`,
               params: {id},
             })
-          }}>Join Now</TouchableOpacity>
+          }}>
+            <Text>Join Now</Text>
+            </TouchableOpacity>
         <TouchableOpacity
           style={[commonStyles.button, {backgroundColor: theme.colors.primary}]}
           onPress={() =>
             // Goes to home if the router does not recognize a way to go back
             router.canGoBack() ? router.back() : router.push("/(tabs)")
           }
-        >Go Back</TouchableOpacity>
+        ><Text>Go Back</Text></TouchableOpacity>
       </LinearGradient>
     </ScrollView>
   )
