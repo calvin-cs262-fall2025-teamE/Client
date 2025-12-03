@@ -8,18 +8,18 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
-    Alert,
-    Dimensions,
-    FlatList,
-    Image,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    Share,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View
+  Alert,
+  Dimensions,
+  FlatList,
+  Image,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
@@ -50,7 +50,7 @@ export default function RVD() {
   const router = useRouter();
 
   const selectedCommunity: Community = communities.find(comm => comm.communityID.toString() === id) || defaultCommunity;
-  const { posts, toggleLike, toggleRetweet, sharePost } = usePostContext();
+  const { posts } = usePostContext();
 
   const thesePosts = posts.filter((post) => post.communityId.toString() === id)
 
@@ -62,13 +62,13 @@ export default function RVD() {
   const handleLike = (postId: number) => {
     console.log('Like clicked for post:', postId);
     Alert.alert('Like Button', `Clicked like for post ${postId}`);
-    toggleLike(postId, currentUserId);
+    // toggleLike(postId, currentUserId);
   };
 
   const handleRetweet = (postId: number) => {
     console.log('Retweet clicked for post:', postId);
     Alert.alert('Retweet Button', `Clicked retweet for post ${postId}`);
-    toggleRetweet(postId, currentUserId);
+    // toggleRetweet(postId, currentUserId);
   };
 
   const handleShare = async (postId: number, postTitle: string) => {
@@ -78,7 +78,7 @@ export default function RVD() {
         message: `Check out this post: ${postTitle}`,
         title: postTitle,
       });
-      sharePost(postId);
+      // sharePost(postId);
     } catch (error) {
       console.error('Error sharing:', error);
     }
