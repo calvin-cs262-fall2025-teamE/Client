@@ -22,11 +22,11 @@ export interface Post {
     upvotes: number,
     timePosted: Date,
     content: string,
-    likes: number,
-    retweets: number,
-    shares: number,
-    likedBy: number[], // Array of user IDs who liked this post
-    retweetedBy: number[], // Array of user IDs who retweeted this post
+    likes?: number,
+    retweets?: number,
+    shares?: number,
+    likedBy?: number[], // Array of user IDs who liked this post
+    retweetedBy?: number[], // Array of user IDs who retweeted this post
     comments: Comment[], // Array of comments on this post
 }
 

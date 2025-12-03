@@ -41,7 +41,6 @@ const CustomRadioButton = (props: buttonProps) => (
 export default function AboutScreen() {
   const { theme } = useTheme();
   const { addPost } = usePostContext();
-  const { communities } = useCommunityContext();
   const router = useRouter();
 
   // UI information:
@@ -64,7 +63,7 @@ export default function AboutScreen() {
       return;
     }
 
-    if (selectedCommunityId === null) {
+    if (!selectedCommunity?.communityID) {
       Alert.alert('Missing Information', 'Please select a community');
       return;
     }
@@ -82,13 +81,13 @@ export default function AboutScreen() {
       shares: 0,
       likedBy: [],
       retweetedBy: [],
+      comments: [],
     });
 
     // Clear form
     setQuestionText('');
     setDetailsText('');
     setCurrentSelected(0);
-    setSelectedCommunityId(0);
 
     // Show success and navigate
     Alert.alert('Success!', 'Your post has been created', [
@@ -165,7 +164,7 @@ export default function AboutScreen() {
             </View>
           </View>
 
-          <View style={styles.section}>
+          {/* <View style={styles.section}>
             <Text style={[styles.label, { color: theme.colors.text }]}>Community</Text>
             <ScrollView 
               horizontal 
@@ -193,7 +192,7 @@ export default function AboutScreen() {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
+          </View> */}
 
           <View style={styles.section}>
             <Text style={[styles.label, { color: theme.colors.text }]}>Your {currentSelected === 0 ? 'Question' : 'Advice'}</Text>

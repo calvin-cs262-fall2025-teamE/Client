@@ -20,9 +20,9 @@ interface PostContextType {
     posts: Post[]; // This will work in with out schema
     deletePost: (id: number) => void;
     addPost: (post: Omit<Post, 'id' | 'timePosted'>) => void;
-    toggleLike: (postId: number, userId: number) => void;
-    toggleRetweet: (postId: number, userId: number) => void;
-    sharePost: (postId: number) => void;
+    // toggleLike: (postId: number, userId: number) => void;
+    // toggleRetweet: (postId: number, userId: number) => void;
+    // sharePost: (postId: number) => void;
     addComment: (postId: number, authorId: number, text: string) => void;
     addReply: (postId: number, commentId: number, authorId: number, text: string) => void;
     toggleCommentLike: (postId: number, commentId: number, userId: number) => void;
@@ -54,7 +54,8 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         communityId: 0,
         upvotes: 16,
         timePosted: new Date(2024, 11, 5, 13, 12, 51, 234),
-        content: 'This is the default post',},
+        content: 'This is the default post',
+        comments: [],},
         {id: 2,
         type: 'question',
         title: 'Is it true that there is a fire drill later today?',
@@ -62,7 +63,8 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         communityId: 0,
         upvotes: 2,
         timePosted: new Date(),
-        content: 'My roommate said this, but I have no idea if it\'s true.',},
+        content: 'My roommate said this, but I have no idea if it\'s true.',
+    comments: [],},
         {id: 3,
         type: 'question',
         title: 'Have people had success making pound cake in these dorms?',
@@ -70,7 +72,8 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         communityId: 2,
         upvotes: 1,
         timePosted: new Date(),
-        content: 'Was wondering if the dorm kitchens have served people well in the past',},
+        content: 'Was wondering if the dorm kitchens have served people well in the past',
+        comments: [],},
         {id: 4,
         type: 'advice',
         title: 'Do not try to grow a tomato plant in the dorms',
@@ -78,7 +81,9 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         communityId: 1,
         upvotes: 5,
         timePosted: new Date(2025, 9, 7, 4, 3, 24, 952),
-        content: 'I tried it and it died',},
+        content: 'I tried it and it died',
+        comments: [],},
+    ])
     // Global comment/reply ID sequence to avoid collisions across nested threads
     const [commentIdSeq, setCommentIdSeq] = useState<number>(1);
 
@@ -89,88 +94,6 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         return id;
     }, [commentIdSeq]);
     // Initialize items from imported JSON data
-    const [posts, setPosts] = useState<Post[]>([
-        {
-            id: 1,
-            type: 'post',
-            title: 'Just started a new React Native project! 🚀',
-            authorId: 1,
-            communityId: 0, // RVD community
-            upvotes: 12,
-            timePosted: new Date(Date.now() - 2 * 60 * 1000), // 2 minutes ago
-            content: "Excited to be building with Expo and React Native!",
-            likes: 8,
-            retweets: 3,
-            shares: 1,
-            likedBy: [],
-            retweetedBy: [],
-            comments: [],
-        },
-        {
-            id: 2,
-            type: 'post',
-            title: 'Check out this beautiful sunset!',
-            authorId: 2,
-            communityId: 0, // RVD community
-            upvotes: 25,
-            timePosted: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-            content: "Captured this amazing view from my dorm window.",
-            likes: 15,
-            retweets: 4,
-            shares: 2,
-            likedBy: [],
-            retweetedBy: [],
-            comments: [],
-        },
-        {
-            id: 3,
-            type: 'post',
-            title: 'Dogs make everything better 🐶',
-            authorId: 3,
-            communityId: 0, // RVD community
-            upvotes: 30,
-            timePosted: new Date(Date.now() - 10 * 60 * 1000), // 10 minutes ago
-            content: "Met the cutest dog on campus today!",
-            likes: 22,
-            retweets: 5,
-            shares: 3,
-            likedBy: [],
-            retweetedBy: [],
-            comments: [],
-        },
-        {
-            id: 4,
-            type: 'question',
-            title: 'Where\'s the best study spot?',
-            authorId: 4,
-            communityId: 0, // RVD community
-            upvotes: 16,
-            timePosted: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
-            content: "Looking for a quiet place to study for finals.",
-            likes: 5,
-            retweets: 2,
-            shares: 1,
-            likedBy: [],
-            retweetedBy: [],
-            comments: [],
-        },
-        {
-            id: 5,
-            type: 'question',
-            title: 'Is it true that there is a fire drill later today?',
-            authorId: 5,
-            communityId: 0, // RVD community
-            upvotes: 8,
-            timePosted: new Date(Date.now() - 20 * 60 * 1000), // 20 minutes ago
-            content: "Heard rumors about a fire drill this afternoon.",
-            likes: 3,
-            retweets: 1,
-            shares: 0,
-            likedBy: [],
-            retweetedBy: [],
-            comments: [],
-        }
-    ]);
 
     /**
      * Removes an item from the list by filtering out the matching ID
@@ -196,70 +119,72 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         ]);
     }, []);
 
+    // A LOT OF THIS CODE IS GOOD, BUT COMMENTED OUT FOR THE SAKE OF GETTING USER TESTS TO WORK:
+
     /**
      * Toggles like status for a post by a specific user
      */
-    const toggleLike = React.useCallback((postId: number, userId: number) => {
-        console.log('toggleLike called:', postId, userId);
-        setPosts((prevPosts) => {
-            const newPosts = prevPosts.map(post => {
-                if (post.id === postId) {
-                    const isLiked = post.likedBy.includes(userId);
-                    console.log('Post found, isLiked:', isLiked);
-                    return {
-                        ...post,
-                        likes: isLiked ? post.likes - 1 : post.likes + 1,
-                        likedBy: isLiked 
-                            ? post.likedBy.filter(id => id !== userId)
-                            : [...post.likedBy, userId]
-                    };
-                }
-                return post;
-            });
-            console.log('Updated posts:', newPosts);
-            return newPosts;
-        });
-    }, []);
+    // const toggleLike = React.useCallback((postId: number, userId: number) => {
+    //     console.log('toggleLike called:', postId, userId);
+    //     setPosts((prevPosts) => {
+    //         const newPosts = prevPosts.map(post => {
+    //             if (post.id === postId) {
+    //                 const isLiked = post.likedBy.includes(userId);
+    //                 console.log('Post found, isLiked:', isLiked);
+    //                 return {
+    //                     ...post,
+    //                     likes: isLiked ? post.likes - 1 : post.likes + 1,
+    //                     likedBy: isLiked 
+    //                         ? post.likedBy.filter(id => id !== userId)
+    //                         : [...post.likedBy, userId]
+    //                 };
+    //             }
+    //             return post;
+    //         });
+    //         console.log('Updated posts:', newPosts);
+    //         return newPosts;
+    //     });
+    // }, []);
 
     /**
      * Toggles retweet status for a post by a specific user
      */
-    const toggleRetweet = React.useCallback((postId: number, userId: number) => {
-        console.log('toggleRetweet called:', postId, userId);
-        setPosts((prevPosts) => {
-            const newPosts = prevPosts.map(post => {
-                if (post.id === postId) {
-                    const isRetweeted = post.retweetedBy.includes(userId);
-                    console.log('Post found, isRetweeted:', isRetweeted);
-                    return {
-                        ...post,
-                        retweets: isRetweeted ? post.retweets - 1 : post.retweets + 1,
-                        retweetedBy: isRetweeted 
-                            ? post.retweetedBy.filter(id => id !== userId)
-                            : [...post.retweetedBy, userId]
-                    };
-                }
-                return post;
-            });
-            console.log('Updated posts:', newPosts);
-            return newPosts;
-        });
-    }, []);
+    // const toggleRetweet = React.useCallback((postId: number, userId: number) => {
+    //     console.log('toggleRetweet called:', postId, userId);
+    //     setPosts((prevPosts) => {
+    //         const newPosts = prevPosts.map(post => {
+    //             if (post.id === postId) {
+    //                 const isRetweeted = post.retweetedBy.includes(userId);
+    //                 console.log('Post found, isRetweeted:', isRetweeted);
+    //                 return {
+    //                     ...post,
+    //                     retweets: isRetweeted ? post.retweets - 1 : post.retweets + 1,
+    //                     retweetedBy: isRetweeted 
+    //                         ? post.retweetedBy.filter(id => id !== userId)
+    //                         : [...post.retweetedBy, userId]
+    //                 };
+    //             }
+    //             return post;
+    //         });
+    //         console.log('Updated posts:', newPosts);
+    //         return newPosts;
+    //     });
+    // }, []);
 
-    /**
-     * Increments share count for a post
-     */
-    const sharePost = React.useCallback((postId: number) => {
-        setPosts((prevPosts) => prevPosts.map(post => {
-            if (post.id === postId) {
-                return {
-                    ...post,
-                    shares: post.shares + 1
-                };
-            }
-            return post;
-        }));
-    }, []);
+    // /**
+    //  * Increments share count for a post
+    //  */
+    // const sharePost = React.useCallback((postId: number) => {
+    //     setPosts((prevPosts) => prevPosts.map(post => {
+    //         if (post.id === postId) {
+    //             return {
+    //                 ...post,
+    //                 shares: post.shares + 1
+    //             };
+    //         }
+    //         return post;
+    //     }));
+    // }, []);
 
     /**
      * Adds a comment to a post
@@ -394,9 +319,9 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         posts,
         deletePost,
         addPost,
-        toggleLike,
-        toggleRetweet,
-        sharePost,
+        // toggleLike,
+        // toggleRetweet,
+        // sharePost,
         addComment,
         addReply,
         toggleCommentLike,
