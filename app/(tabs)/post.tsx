@@ -41,6 +41,7 @@ const CustomRadioButton = (props: buttonProps) => (
 export default function AboutScreen() {
   const { theme } = useTheme();
   const { addPost } = usePostContext();
+  const { communities } = useCommunityContext();
   const router = useRouter();
 
   // UI information:
@@ -63,8 +64,8 @@ export default function AboutScreen() {
       return;
     }
 
-    if (!selectedCommunity) {
-      Alert.alert('Missing Community', 'Please select a community.');
+    if (selectedCommunityId === null) {
+      Alert.alert('Missing Information', 'Please select a community');
       return;
     }
 
@@ -76,12 +77,18 @@ export default function AboutScreen() {
       authorId: user!.id, // TODO: Replace with actual user ID from auth context
       communityId: 0, // TODO: Allow user to select community
       upvotes: 0,
+      likes: 0,
+      retweets: 0,
+      shares: 0,
+      likedBy: [],
+      retweetedBy: [],
     });
 
     // Clear form
     setQuestionText('');
     setDetailsText('');
     setCurrentSelected(0);
+    setSelectedCommunityId(0);
 
     // Show success and navigate
     Alert.alert('Success!', 'Your post has been created', [
@@ -156,6 +163,36 @@ export default function AboutScreen() {
                 theme={theme}
               />
             </View>
+          </View>
+
+          <View style={styles.section}>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Community</Text>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.communityScroll}
+            >
+              {communities.map((community) => (
+                <TouchableOpacity
+                  key={community.communityID}
+                  style={[
+                    styles.communityChip,
+                    {
+                      backgroundColor: selectedCommunityId === community.communityID ? theme.colors.primary : theme.colors.chip,
+                      borderColor: selectedCommunityId === community.communityID ? theme.colors.primary : theme.colors.border,
+                    }
+                  ]}
+                  onPress={() => setSelectedCommunityId(community.communityID)}
+                >
+                  <Text style={[
+                    styles.communityChipText,
+                    { color: selectedCommunityId === community.communityID ? '#FFF' : theme.colors.text }
+                  ]}>
+                    {community.communityName}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
 
           <View style={styles.section}>
@@ -305,6 +342,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    marginBottom: 10,
-  }
+  },
+  communityScroll: {
+    gap: 10,
+    paddingVertical: 4,
+  },
+  communityChip: {
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 20,
+    borderWidth: StyleSheet.hairlineWidth,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  communityChipText: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
 });
