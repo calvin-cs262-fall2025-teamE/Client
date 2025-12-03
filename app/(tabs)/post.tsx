@@ -119,7 +119,7 @@ export default function AboutScreen() {
               style={[styles.small_button, { backgroundColor: theme.colors.primary }]}
             >
               <Text
-                style={{color: theme.colors.text}}
+                style={{color: theme.colors.text, fontSize: 14}}
               >{selectedCommunity?.communityName ? "Posting in " + selectedCommunity.communityName : "Please select a community"}</Text>
             </TouchableOpacity>
 
@@ -130,8 +130,9 @@ export default function AboutScreen() {
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => handleCommunitySelect(item)}
+                    style={styles.dropdownOption}
                   >
-                    <Text style={{color: theme.colors.text}}>{item.communityName}</Text>{" "}
+                    <Text style={{color: theme.colors.text, fontSize: 18}}>{item.communityName}</Text>
                   </TouchableOpacity>
                 )}
               />
@@ -210,6 +211,11 @@ export default function AboutScreen() {
 }
 
 const styles = StyleSheet.create({
+  dropdownOption: {
+    margin: 2,
+    padding: 2,
+    backgroundColor: '#555',
+  },
   container: {
     flex: 1,
   },
@@ -299,5 +305,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
+    marginBottom: 10,
   }
 });
