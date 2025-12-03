@@ -1,11 +1,13 @@
 import { useCommunityContext } from '@/context/CommunityContext';
 import { usePostContext } from '@/context/PostContext';
 import { useTheme } from '@/context/ThemeContext';
+import { Community } from '@/types/Community';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useAuth } from '../AuthContext';
 
 interface buttonProps {
   label?: string,
@@ -41,10 +43,19 @@ export default function AboutScreen() {
   const { addPost } = usePostContext();
   const { communities } = useCommunityContext();
   const router = useRouter();
+
+  // UI information:
   const [currentSelected, setCurrentSelected] = useState(0);
   const [questionText, setQuestionText] = useState('');
   const [detailsText, setDetailsText] = useState('');
-  const [selectedCommunityId, setSelectedCommunityId] = useState(0);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+
+  // Contextual information:
+  const { user } = useAuth();
+
+  const { id } = useLocalSearchParams();
+  const { communities } = useCommunityContext();
+  const [selectedCommunity, setSelectedCommunity] = useState(communities.find(comm => comm.communityID.toString() === id))
 
   const handlePost = () => {
     // Validate inputs
@@ -63,8 +74,8 @@ export default function AboutScreen() {
       type: currentSelected === 0 ? 'question' : 'advice',
       title: questionText.trim(),
       content: detailsText.trim() || questionText.trim(),
-      authorId: 1, // TODO: Replace with actual user ID from auth context
-      communityId: selectedCommunityId,
+      authorId: user!.id, // TODO: Replace with actual user ID from auth context
+      communityId: 0, // TODO: Allow user to select community
       upvotes: 0,
       likes: 0,
       retweets: 0,
@@ -88,6 +99,10 @@ export default function AboutScreen() {
     ]);
   };
 
+  const handleCommunitySelect = (community: Community) => {
+    setSelectedCommunity(community);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <LinearGradient
@@ -100,6 +115,35 @@ export default function AboutScreen() {
           <View style={styles.hero}>
             <Text style={[styles.title, { color: theme.colors.text }]}>Create Post</Text>
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Share your question or advice</Text>
+          </View>
+
+          <View>
+            {/* This the code here is copied and modified from this webpage: https://builtin.com/articles/react-native-dropdown */}
+            {/* Credit to Aneeqa Khan */}
+            
+            <TouchableOpacity
+              onPress={() => setDropdownVisible(!isDropdownVisible)}
+              style={[styles.small_button, { backgroundColor: theme.colors.primary }]}
+            >
+              <Text
+                style={{color: theme.colors.text}}
+              >{selectedCommunity?.communityName ? "Posting in " + selectedCommunity.communityName : "Please select a community"}</Text>
+            </TouchableOpacity>
+
+            {isDropdownVisible && (
+              <FlatList
+                data={communities}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleCommunitySelect(item)}
+                  >
+                    <Text style={{color: theme.colors.text}}>{item.communityName}</Text>{" "}
+                  </TouchableOpacity>
+                )}
+              />
+
+            )}
           </View>
 
           <View style={styles.section}>
@@ -174,7 +218,7 @@ export default function AboutScreen() {
             />
           </View>
 
-          <View style={styles.button_container}>
+          <View style={[styles.button_container, {marginBottom: 30}]}>
             <TouchableOpacity
              style={[styles.small_button, { backgroundColor: '#f11'}]} 
             >
@@ -190,7 +234,7 @@ export default function AboutScreen() {
           </View>
 
           <TouchableOpacity 
-            style={[styles.post_button, { backgroundColor: theme.colors.primary }]}
+            style={[styles.post_button, { backgroundColor: theme.colors.primary}]}
             onPress={handlePost}
           >
             <Ionicons name="send" size={20} color="white" style={{ marginRight: 8 }} />

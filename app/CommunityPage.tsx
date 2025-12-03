@@ -98,8 +98,8 @@ export default function RVD() {
             <Ionicons name="menu" size={26} color={theme.colors.text} />
           </TouchableOpacity>
           <View style={styles.headerCenter}>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>RVD</Text>
-            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>Rodenhouse–Van Dellen</Text>
+            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{selectedCommunity.communityName}</Text>
+            <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{selectedCommunity.description}</Text>
           </View>
           <TouchableOpacity style={styles.iconButton}>
             <Ionicons name="sparkles" size={24} color={theme.colors.primary} />
@@ -180,7 +180,8 @@ export default function RVD() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]} 
         activeOpacity={0.8}
         onPress={() => router.push({
-                pathname: "./(tabs)/post"})}>
+                pathname: "./(tabs)/post",
+                params: {id: selectedCommunity.communityID},})}>
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
       </LinearGradient>

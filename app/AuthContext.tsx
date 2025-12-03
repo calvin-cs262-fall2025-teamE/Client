@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 interface User {
   id: string;
@@ -7,6 +7,7 @@ interface User {
   lastName: string;
   phone?: string;
   profileImage?: string | null;
+  communities?: string[];
 }
 
 interface AuthContextType {
@@ -23,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const signIn = (userData: User) => {
-    setUser(userData);
+    setUser({...userData, communities: ['0', '1', '3']}); //Adding hard-coded communities
   };
 
   const signOut = () => {
