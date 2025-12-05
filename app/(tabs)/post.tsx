@@ -73,8 +73,8 @@ export default function AboutScreen() {
       type: currentSelected === 0 ? 'question' : 'advice',
       title: questionText.trim(),
       content: detailsText.trim() || questionText.trim(),
-      authorId: user!.id, // TODO: Replace with actual user ID from auth context
-      communityId: 0, // TODO: Allow user to select community
+      authorId: user!.id,
+      communityId: selectedCommunity.communityID,
       upvotes: 0,
       likes: 0,
       retweets: 0,

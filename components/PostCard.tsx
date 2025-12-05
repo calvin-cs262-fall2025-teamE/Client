@@ -4,7 +4,7 @@ import { Comment, Post } from "@/types/Post";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Share, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 
 interface PostCardProps {
   post: Post;
@@ -14,7 +14,8 @@ interface PostCardProps {
 
 export default function PostCard({ post, currentUserId, isDetailView = false }: PostCardProps) {
   const { theme } = useTheme();
-  const { toggleLike, toggleRetweet, sharePost, addComment, addReply, toggleCommentLike, toggleCommentRetweet, shareComment } = usePostContext();
+  const { addComment, addReply, toggleCommentLike, toggleCommentRetweet, shareComment } = usePostContext();
+  // toggleLike, toggleRetweet, sharePost
   const router = useRouter();
   const [commenting, setCommenting] = useState(false);
   const [showComments, setShowComments] = useState(isDetailView);
@@ -23,25 +24,25 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
   const [replyText, setReplyText] = useState('');
   const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
 
-  const handleLike = () => {
-    toggleLike(post.id, currentUserId);
-  };
+  // const handleLike = () => {
+  //   toggleLike(post.id, currentUserId);
+  // };
 
-  const handleRetweet = () => {
-    toggleRetweet(post.id, currentUserId);
-  };
+  // const handleRetweet = () => {
+  //   toggleRetweet(post.id, currentUserId);
+  // };
 
-  const handleShare = async () => {
-    try {
-      await Share.share({
-        message: `Check out this post: ${post.title}`,
-        title: post.title,
-      });
-      sharePost(post.id);
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
+  // const handleShare = async () => {
+  //   try {
+  //     await Share.share({
+  //       message: `Check out this post: ${post.title}`,
+  //       title: post.title,
+  //     });
+  //     sharePost(post.id);
+  //   } catch (error) {
+  //     console.error('Error sharing:', error);
+  //   }
+  // };
 
   const handleComment = () => {
     setShowComments(!showComments);
@@ -221,7 +222,7 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
             )}
           </TouchableOpacity>
           
-          <TouchableOpacity 
+          {/* <TouchableOpacity 
             style={styles.actionBtn}
             onPress={handleRetweet}
           >
@@ -263,7 +264,7 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
                 {post.shares}
               </Text>
             )}
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {/* Display Comments Section - Only when showComments is true */}
