@@ -45,6 +45,7 @@ export default function HomeScreen() {
           />
 
           <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+            <Ionicons name="search" size={22} color={theme.colors.textSecondary} style={styles.searchIconLeft} />
             <TextInput
               style={[styles.searchBar, { color: theme.colors.text }]}
               placeholder="Search..."
@@ -52,9 +53,6 @@ export default function HomeScreen() {
               value={query}
               onChangeText={setQuery}
             />
-            <TouchableOpacity style={[styles.iconButton, { backgroundColor: theme.colors.primary }]}>
-              <Ionicons name="search" size={22} color="white" />
-            </TouchableOpacity>
           </View>
 
           {query.length > 0 && (
@@ -186,11 +184,14 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     elevation: 2,
     borderWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 12,
+  },
+  searchIconLeft: {
+    marginRight: 8,
   },
   searchBar: {
     flex: 1,
     paddingVertical: 12,
-    paddingHorizontal: 14,
     fontSize: 16,
   },
   iconButton: {
