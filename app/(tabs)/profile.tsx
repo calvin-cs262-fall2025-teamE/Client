@@ -1,9 +1,9 @@
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/context/ThemeContext';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
@@ -42,7 +42,7 @@ export default function AboutScreen() {
           <View style={styles.headerButtons}>
             <TouchableOpacity 
               activeOpacity={0.7} 
-              style={[styles.iconButton, { backgroundColor: theme.colors.chip }]}
+              style={[styles.iconButton, { backgroundColor: theme.colors.chip }]} 
               onPress={toggleTheme}
             >
               <Ionicons 
@@ -53,7 +53,7 @@ export default function AboutScreen() {
             </TouchableOpacity>
             <TouchableOpacity 
               activeOpacity={0.7} 
-              style={[styles.signOutButton, { backgroundColor: theme.colors.chip }]}
+              style={[styles.signOutButton, { backgroundColor: theme.colors.chip }]} 
               onPress={handleSignOut}
             >
               <Ionicons name="log-out-outline" size={22} color={theme.colors.primary} />
@@ -291,5 +291,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
+  },
+  draftCard: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    elevation: 2,
+  },
+  draftTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  draftText: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginTop: 4,
+  },
+  draftMeta: {
+    fontSize: 12,
+    marginTop: 4,
+  },
+  draftDeleteBtn: {
+    marginTop: 8,
+    alignSelf: 'flex-end',
+  },
+  emptyState: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 48,
+    paddingHorizontal: 24,
+    borderWidth: 1,
+    borderRadius: 12,
+    borderStyle: 'dashed',
+  },
+  emptyStateText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginTop: 12,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    marginTop: 4,
+    textAlign: 'center',
   },
 });
