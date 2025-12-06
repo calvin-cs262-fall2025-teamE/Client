@@ -1,10 +1,10 @@
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from './AuthContext';
 
 export default function SignInScreen() {
@@ -44,10 +44,6 @@ export default function SignInScreen() {
       style={styles.bg}
     >
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={() => router.back()} style={[styles.backButtonAbsolute, { backgroundColor: theme.colors.chip }]}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-
         <View style={styles.hero}>
           <LinearGradient
             colors={[`${theme.colors.primary}40`, `${theme.colors.accent}30`, "transparent"]}
