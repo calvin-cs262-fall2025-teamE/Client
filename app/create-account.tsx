@@ -70,7 +70,7 @@ export default function CreateAccountScreen() {
     >
       <SafeAreaView style={styles.container}>
         <TouchableOpacity onPress={() => router.back()} style={[styles.backButtonAbsolute, { backgroundColor: theme.colors.chip }]}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -82,15 +82,15 @@ export default function CreateAccountScreen() {
               style={styles.heroGlow}
               pointerEvents="none"
             />
-            <Text style={[styles.title, { color: theme.colors.textPrimary, textShadowColor: `${theme.colors.primary}40` }]}>Create Account</Text>
-            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Join the Calvin community today</Text>
+            <Text style={[styles.title, { color: theme.colors.text, textShadowColor: `${theme.colors.primary}40` }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Join Community today</Text>
           </View>
 
           <View style={[styles.card, { backgroundColor: theme.colors.surface, shadowColor: theme.colors.primary, borderColor: `${theme.colors.primary}20` }]}>
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>First Name</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>First Name</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="First Name"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={firstName}
@@ -100,9 +100,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Last Name</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Last Name</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="Last Name"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={lastName}
@@ -112,9 +112,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Email</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Email</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="you@example.com"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={email}
@@ -125,9 +125,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Email</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Confirm Email</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="you@example.com"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={confirmEmail}
@@ -138,10 +138,10 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Password</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Password</Text>
               <View style={styles.passwordRow}>
                 <TextInput
-                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                   placeholder="••••••••"
                   placeholderTextColor={theme.colors.textSecondary}
                   value={password}
@@ -162,10 +162,10 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Password</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Confirm Password</Text>
               <View style={styles.passwordRow}>
                 <TextInput
-                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                   placeholder="••••••••"
                   placeholderTextColor={theme.colors.textSecondary}
                   value={confirmPassword}

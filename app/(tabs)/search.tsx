@@ -1,8 +1,8 @@
-import { Text, View, StyleSheet, TextInput, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface Community {
   id: string;
@@ -71,6 +71,7 @@ export default function SearchScreen() {
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Discover communities and posts</Text>
           </View>
 
+          <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
           <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
             <TextInput
               style={[styles.searchInput, { color: theme.colors.text }]}
