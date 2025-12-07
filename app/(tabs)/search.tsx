@@ -1,8 +1,8 @@
-import { Text, View, StyleSheet, TextInput, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
-import { useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useState } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface Community {
   id: string;
@@ -58,13 +58,13 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={theme.colors.background}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      >
+    <LinearGradient
+      colors={theme.colors.background as [string, string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.hero}>
             <Text style={[styles.title, { color: theme.colors.text }]}>Search</Text>
@@ -136,8 +136,8 @@ export default function SearchScreen() {
             )}
           </ScrollView>
         </View>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -152,12 +152,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 12,
   },
   hero: {
     width: "100%",
     gap: 6,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   title: {
     fontSize: 28,
