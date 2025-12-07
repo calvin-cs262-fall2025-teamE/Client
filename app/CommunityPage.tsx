@@ -2,16 +2,18 @@ import PostCard from "@/components/PostCard";
 import { useCommunityContext } from "@/context/CommunityContext";
 import { usePostContext } from "@/context/PostContext";
 import { useTheme } from "@/context/ThemeContext";
+import { commonStyles } from "@/styles/common";
 import { Community, defaultCommunity } from "@/types/Community";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Dimensions,
   FlatList,
   Image,
+  Modal,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -55,6 +57,9 @@ export default function RVD() {
   const thesePosts = posts.filter((post) => post.communityId.toString() === id)
 
   const { theme } = useTheme();
+
+  //Logic for on-line help:
+  const [helpVisible, setHelpVisible] = useState(false);
   
   // Simulated current user ID - replace with actual auth context when available
   const currentUserId = 1;
@@ -102,9 +107,47 @@ export default function RVD() {
             <Text style={[styles.headerSubtitle, { color: theme.colors.textSecondary }]}>{selectedCommunity.description}</Text>
           </View>
           <TouchableOpacity style={styles.iconButton}>
-            <Ionicons name="sparkles" size={24} color={theme.colors.primary} />
+            <Ionicons name="help-circle-outline" size={24} color={theme.colors.primary} onPress={() => setHelpVisible(true)}/>
           </TouchableOpacity>
         </View>
+
+        {/* On-line help popup */}
+        <Modal
+          visible={helpVisible}
+          onRequestClose={() => {
+            setHelpVisible(!helpVisible);
+        }}>
+          <View style={commonStyles.helpPage}>
+            <Text style={commonStyles.helpTitle}>The {selectedCommunity.communityName} community page</Text>
+            <Text style={commonStyles.helpText}>
+              On this page you can view all the most recent posts inside the {selectedCommunity.communityName} community and quickly enter a response to any of them.
+            </Text>
+            <Text style={commonStyles.helpText}>
+              At the top of the page you can see a list of the members of {selectedCommunity.communityName}
+            </Text>
+            <Text style={commonStyles.helpText}>
+              Below that is a series of posts. You may: 
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - Scroll until you find one you want to respond to and see the responses of
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - Tap the <Ionicons name="chatbubble-outline" size={18}></Ionicons> icon and begin typing your reply
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - Tap text of the post to simply see existing responses
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - Tap the <Ionicons name="chatbubble" size={18}></Ionicons> icon again to hide response
+            </Text>
+            <TouchableOpacity
+            style={[commonStyles.helpCloseButton, {backgroundColor: 'black'}]}
+            onPress={() => setHelpVisible(!helpVisible)}
+            >
+              <Text style={[commonStyles.buttonText, {fontSize: 20}]}>Hide Help</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
 
         {/* Horizontal Avatars */}
         <ScrollView 
