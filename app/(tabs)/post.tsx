@@ -190,13 +190,13 @@ export default function AboutScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={theme.colors.background as [string, string, string]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      >
+    <LinearGradient
+      colors={theme.colors.background as [string, string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.hero}>
             <Text style={[styles.title, { color: theme.colors.text }]}>Create Post</Text>
@@ -428,8 +428,8 @@ export default function AboutScreen() {
             )}
           </View>
         </ScrollView>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -444,12 +444,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 12,
   },
   hero: {
     width: "100%",
     gap: 6,
-    marginBottom: 24,
+    marginBottom: 12,
   },
   title: {
     fontSize: 28,

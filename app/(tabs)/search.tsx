@@ -58,20 +58,19 @@ export default function SearchScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={theme.colors.background}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      >
+    <LinearGradient
+      colors={theme.colors.background as [string, string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
         <View style={styles.content}>
           <View style={styles.hero}>
             <Text style={[styles.title, { color: theme.colors.text }]}>Search</Text>
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Discover communities and posts</Text>
           </View>
 
-          <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
           <View style={[styles.searchContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
             <TextInput
               style={[styles.searchInput, { color: theme.colors.text }]}
@@ -137,8 +136,8 @@ export default function SearchScreen() {
             )}
           </ScrollView>
         </View>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
@@ -153,12 +152,13 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingTop: 12,
   },
   hero: {
     width: "100%",
     gap: 6,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   title: {
     fontSize: 28,

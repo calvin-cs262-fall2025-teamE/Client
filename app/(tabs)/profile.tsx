@@ -30,13 +30,13 @@ export default function AboutScreen() {
   ];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <LinearGradient
-        colors={theme.colors.background}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      >
+    <LinearGradient
+      colors={theme.colors.background as [string, string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container}>
         <View style={styles.headerRow}>
           <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Profile</Text>
           <View style={styles.headerButtons}>
@@ -142,8 +142,8 @@ export default function AboutScreen() {
             </View>
           )}
         </ScrollView>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 

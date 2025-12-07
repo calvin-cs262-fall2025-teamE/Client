@@ -116,7 +116,7 @@ export default function RVD() {
   };
   
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
       <LinearGradient
         colors={theme.colors.background}
         start={{ x: 0, y: 0 }}
@@ -163,7 +163,7 @@ export default function RVD() {
           data={rvdPosts}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 90 }}
+          contentContainerStyle={{ paddingBottom: 140 }}
           renderItem={({ item }) => (
             <PostCard post={item} currentUserId={currentUserId} />
           )}
@@ -180,6 +180,41 @@ export default function RVD() {
         >
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
+
+        {/* Bottom Navigation Bar */}
+        <View style={[styles.bottomNav, { backgroundColor: 'transparent', borderTopColor: theme.colors.border }]}>
+          <TouchableOpacity 
+            style={styles.navItem} 
+            onPress={() => router.push('/(tabs)/index')}
+          >
+            <Ionicons name="compass-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.navItem}
+            onPress={() => router.push('/(tabs)/search')}
+          >
+            <Ionicons name="search-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Search</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.navItem}
+            onPress={() => router.push('/(tabs)/post')}
+          >
+            <Ionicons name="add-circle-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Post</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.navItem}
+            onPress={() => router.push('/(tabs)/profile')}
+          >
+            <Ionicons name="person-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -189,6 +224,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 32 : 0,
+    backgroundColor: 'transparent',
   },
   background: {
     flex: 1,
@@ -310,7 +346,7 @@ const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
     right: 22,
-    bottom: 32,
+    bottom: 100,
     width: 58,
     height: 58,
     borderRadius: 29,
@@ -321,5 +357,28 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 5,
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    height: 85,
+    paddingBottom: 20,
+    paddingTop: 10,
+    backgroundColor: 'transparent',
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+  },
+  navLabel: {
+    fontSize: 11,
+    fontWeight: '600',
   },
 });
