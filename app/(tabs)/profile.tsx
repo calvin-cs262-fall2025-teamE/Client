@@ -1,34 +1,56 @@
+import { useCommunityContext } from '@/context/CommunityContext';
+import { usePostContext } from '@/context/PostContext';
 import { useTheme } from '@/context/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, signOut, updateUser } = useAuth();
   const { theme, themeMode, toggleTheme } = useTheme();
+  const { posts } = usePostContext();
+  const { communities } = useCommunityContext();
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
+
+  const userPosts = useMemo(() => {
+    if (!user) return [];
+    return posts.filter((p) => p.authorId === user.id);
+  }, [posts, user]);
+
+  const [joinedCommunities, setJoinedCommunities] = useState(() => {
+    if (!user?.communities) return [];
+    return communities.filter((c) => user.communities!.includes(c.communityID.toString()));
+  });
+
+  React.useEffect(() => {
+    if (!user?.communities) {
+      setJoinedCommunities([]);
+    } else {
+      setJoinedCommunities(communities.filter((c) => user.communities!.includes(c.communityID.toString())));
+    }
+  }, [user, communities]);
+
+  const handleLeave = (communityID: number) => {
+    if (!user) return;
+    const updated = (user.communities || []).filter((c) => c !== communityID.toString());
+    updateUser({ ...user, communities: updated });
+    setJoinedCommunities((prev) => prev.filter((c) => c.communityID !== communityID));
+  };
+
+  const handleJoin = (communityID: number) => {
+    if (!user) return;
+    const updated = Array.from(new Set([...(user.communities || []), communityID.toString()]));
+    updateUser({ ...user, communities: updated });
+  };
 
   const handleSignOut = () => {
     signOut();
     router.replace('/login');
   };
-
-  const posts = [
-    { id: '1', user: 'User A', text: 'Excited to join the Calvin Community Hub!', time: '2h ago' },
-    { id: '2', user: 'User B', text: 'Looking forward to connecting with new communities.', time: '1d ago' },
-    { id: '3', user: 'User C', text: 'Sharing a quick update on my latest project.', time: '3d ago' },
-  ];
-
-  const communities = [
-    { id: '1', name: 'Calvin Developers', members: 128 },
-    { id: '2', name: 'Calvin Designers', members: 76 },
-    { id: '3', name: 'Calvin Entrepreneurs', members: 54 },
-  ];
-
   return (
     <LinearGradient
       colors={theme.colors.background as [string, string, string]}
@@ -108,37 +130,102 @@ export default function AboutScreen() {
 
           {activeTab === 'Posts' ? (
             <View style={styles.listContainer}>
-              {posts.map((post) => (
-                <View key={post.id} style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-                  <View style={styles.cardHeader}>
-                    <View style={[styles.avatarSmall, { backgroundColor: theme.colors.chip }]}>
-                      <Ionicons name="person" size={18} color={theme.colors.text} />
-                    </View>
-                    <View style={styles.cardHeaderText}>
-                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{post.user}</Text>
-                      <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{post.time}</Text>
-                    </View>
-                  </View>
-                  <Text style={[styles.cardBody, { color: theme.colors.text }]}>{post.text}</Text>
+              {userPosts.length === 0 ? (
+                <View style={[styles.emptyState, { borderColor: theme.colors.border }]}> 
+                  <Ionicons name="document-text-outline" size={32} color={theme.colors.textSecondary} />
+                  <Text style={[styles.emptyStateText, { color: theme.colors.text }]}>No posts yet</Text>
+                  <Text style={[styles.emptyStateSubtext, { color: theme.colors.textSecondary }]}>Share your first post to see it here.</Text>
                 </View>
-              ))}
+              ) : (
+                  userPosts.map((post) => {
+                    const postCommunity = communities.find((c) => c.communityID === post.communityId);
+                    return (
+                      <TouchableOpacity
+                        key={post.id}
+                        style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+                        activeOpacity={0.85}
+                        onPress={() => {
+                          if (postCommunity) {
+                            router.push({ pathname: `/CommunityPage`, params: { id: postCommunity.communityID, postId: post.id } });
+                          }
+                        }}
+                      >
+                        <View style={styles.cardHeader}>
+                          <View style={[styles.avatarSmall, { backgroundColor: theme.colors.chip }]}> 
+                            <Ionicons name="person" size={18} color={theme.colors.text} />
+                          </View>
+                          <View style={styles.cardHeaderText}>
+                            <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{post.title}</Text>
+                            <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{new Date(post.timePosted).toLocaleString()}</Text>
+                          </View>
+                        </View>
+                        <Text style={[styles.cardBody, { color: theme.colors.text }]}>{post.content}</Text>
+                        {postCommunity && (
+                          <View style={[styles.communityTag, { backgroundColor: theme.colors.chip, borderColor: theme.colors.border }]}>
+                            <Ionicons name="people" size={12} color={theme.colors.primary} style={{ marginRight: 4 }} />
+                            <Text style={[styles.communityTagText, { color: theme.colors.text }]} numberOfLines={1}>
+                              {postCommunity.communityName}
+                            </Text>
+                          </View>
+                        )}
+                      </TouchableOpacity>
+                    );
+                  })
+              )}
             </View>
           ) : (
             <View style={styles.listContainer}>
-              {communities.map((c) => (
-                <TouchableOpacity key={c.id} style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-                  <View style={styles.cardHeader}>
-                    <View style={[styles.communityBadge, { backgroundColor: theme.colors.chip }]}>
-                      <Ionicons name="people" size={20} color={theme.colors.primary} />
-                    </View>
-                    <View style={styles.cardHeaderText}>
-                      <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{c.name}</Text>
-                      <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{c.members} members</Text>
-                    </View>
-                    <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
-                  </View>
-                </TouchableOpacity>
-              ))}
+              {joinedCommunities.length === 0 ? (
+                <View style={[styles.emptyState, { borderColor: theme.colors.border }]}> 
+                  <Ionicons name="people-outline" size={32} color={theme.colors.textSecondary} />
+                  <Text style={[styles.emptyStateText, { color: theme.colors.text }]}>No communities yet</Text>
+                  <Text style={[styles.emptyStateSubtext, { color: theme.colors.textSecondary }]}>Join a community to see it here.</Text>
+                </View>
+              ) : (
+                joinedCommunities.map((c) => {
+                  const isMember = user?.communities?.includes(c.communityID.toString());
+                  return (
+                    <TouchableOpacity 
+                      key={c.communityID} 
+                      style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+                      onPress={() => router.push({ pathname: `/CommunityPage`, params: { id: c.communityID } })}
+                    >
+                      <View style={styles.cardHeader}>
+                        <View style={[styles.communityBadge, { backgroundColor: theme.colors.chip }]}> 
+                          <Ionicons name="people" size={20} color={theme.colors.primary} />
+                        </View>
+                        <View style={styles.cardHeaderText}>
+                          <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{c.communityName}</Text>
+                          <Text style={[styles.cardTimestamp, { color: theme.colors.textSecondary }]}>{c.description}</Text>
+                        </View>
+                        <View style={styles.cardRight}>
+                          {isMember ? (
+                            <TouchableOpacity
+                              style={[styles.leaveButton, { borderColor: theme.colors.border }]}
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                handleLeave(c.communityID);
+                              }}
+                            >
+                              <Text style={[styles.leaveText, { color: theme.colors.textSecondary }]}>Leave</Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={[styles.joinButton, { backgroundColor: theme.colors.primary }]}
+                              onPress={(e) => {
+                                e.stopPropagation();
+                                handleJoin(c.communityID);
+                              }}
+                            >
+                              <Text style={[styles.joinText, { color: '#FFF' }]}>Join</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      </View>
+                    </TouchableOpacity>
+                  );
+                })
+              )}
             </View>
           )}
         </ScrollView>
@@ -162,74 +249,87 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingTop: 16,
-    paddingBottom: 8,
+    paddingBottom: 12,
   },
   headerTitle: {
-    fontSize: 22,
-    fontWeight: '700',
+    fontSize: 28,
+    fontWeight: '800',
+    letterSpacing: -0.5,
   },
   headerButtons: {
     flexDirection: 'row',
-    gap: 8,
+    gap: 10,
   },
   iconButton: {
-    padding: 8,
-    borderRadius: 8,
+    padding: 10,
+    borderRadius: 12,
   },
   signOutButton: {
-    padding: 8,
-    borderRadius: 8,
+    padding: 10,
+    borderRadius: 12,
   },
   scrollContent: {
     paddingHorizontal: 20,
-    paddingBottom: 24,
+    paddingBottom: 32,
   },
   profileSection: {
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 20,
+    marginTop: 12,
+    marginBottom: 24,
   },
   avatarLarge: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   avatarImage: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 104,
+    height: 104,
+    borderRadius: 52,
   },
   username: {
-    marginTop: 12,
-    fontSize: 20,
-    fontWeight: '700',
+    marginTop: 16,
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.3,
   },
   bio: {
-    marginTop: 6,
-    fontSize: 14,
+    marginTop: 8,
+    fontSize: 15,
     textAlign: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    lineHeight: 21,
   },
   editButton: {
-    marginTop: 14,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12,
+    marginTop: 16,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
+    shadowColor: "#e63946",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 4,
   },
   editButtonText: {
     color: '#FFFFFF',
-    fontWeight: '600',
+    fontWeight: '700',
     fontSize: 15,
   },
   tabsRow: {
     flexDirection: 'row',
     marginTop: 8,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: 1,
   },
   tabItem: {
     flex: 1,
@@ -284,6 +384,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
   },
+  communityTag: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  communityTagText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  communityPill: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  communityPillText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
   communityBadge: {
     width: 36,
     height: 36,
@@ -336,5 +464,29 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 4,
     textAlign: 'center',
+  },
+  cardRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  leaveButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  leaveText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  joinButton: {
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  joinText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

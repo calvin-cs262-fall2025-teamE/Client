@@ -20,14 +20,10 @@ interface PostContextType {
     posts: Post[]; // This will work in with out schema
     deletePost: (id: number) => void;
     addPost: (post: Omit<Post, 'id' | 'timePosted'>) => void;
-    // toggleLike: (postId: number, userId: number) => void;
-    // toggleRetweet: (postId: number, userId: number) => void;
-    // sharePost: (postId: number) => void;
+    toggleLike: (postId: number, userId: number) => void;
     addComment: (postId: number, authorId: number, text: string) => void;
     addReply: (postId: number, commentId: number, authorId: number, text: string) => void;
     toggleCommentLike: (postId: number, commentId: number, userId: number) => void;
-    toggleCommentRetweet: (postId: number, commentId: number, userId: number) => void;
-    shareComment: (postId: number, commentId: number) => void;
 }
 
 /**
@@ -119,72 +115,31 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         ]);
     }, []);
 
-    // A LOT OF THIS CODE IS GOOD, BUT COMMENTED OUT FOR THE SAKE OF GETTING USER TESTS TO WORK:
-
     /**
      * Toggles like status for a post by a specific user
      */
-    // const toggleLike = React.useCallback((postId: number, userId: number) => {
-    //     console.log('toggleLike called:', postId, userId);
-    //     setPosts((prevPosts) => {
-    //         const newPosts = prevPosts.map(post => {
-    //             if (post.id === postId) {
-    //                 const isLiked = post.likedBy.includes(userId);
-    //                 console.log('Post found, isLiked:', isLiked);
-    //                 return {
-    //                     ...post,
-    //                     likes: isLiked ? post.likes - 1 : post.likes + 1,
-    //                     likedBy: isLiked 
-    //                         ? post.likedBy.filter(id => id !== userId)
-    //                         : [...post.likedBy, userId]
-    //                 };
-    //             }
-    //             return post;
-    //         });
-    //         console.log('Updated posts:', newPosts);
-    //         return newPosts;
-    //     });
-    // }, []);
-
-    /**
-     * Toggles retweet status for a post by a specific user
-     */
-    // const toggleRetweet = React.useCallback((postId: number, userId: number) => {
-    //     console.log('toggleRetweet called:', postId, userId);
-    //     setPosts((prevPosts) => {
-    //         const newPosts = prevPosts.map(post => {
-    //             if (post.id === postId) {
-    //                 const isRetweeted = post.retweetedBy.includes(userId);
-    //                 console.log('Post found, isRetweeted:', isRetweeted);
-    //                 return {
-    //                     ...post,
-    //                     retweets: isRetweeted ? post.retweets - 1 : post.retweets + 1,
-    //                     retweetedBy: isRetweeted 
-    //                         ? post.retweetedBy.filter(id => id !== userId)
-    //                         : [...post.retweetedBy, userId]
-    //                 };
-    //             }
-    //             return post;
-    //         });
-    //         console.log('Updated posts:', newPosts);
-    //         return newPosts;
-    //     });
-    // }, []);
-
-    // /**
-    //  * Increments share count for a post
-    //  */
-    // const sharePost = React.useCallback((postId: number) => {
-    //     setPosts((prevPosts) => prevPosts.map(post => {
-    //         if (post.id === postId) {
-    //             return {
-    //                 ...post,
-    //                 shares: post.shares + 1
-    //             };
-    //         }
-    //         return post;
-    //     }));
-    // }, []);
+    const toggleLike = React.useCallback((postId: number, userId: number) => {
+        console.log('toggleLike called:', postId, userId);
+        setPosts((prevPosts) => {
+            const newPosts = prevPosts.map(post => {
+                if (post.id === postId) {
+                    const likedBy = post.likedBy || [];
+                    const isLiked = likedBy.includes(userId);
+                    console.log('Post found, isLiked:', isLiked);
+                    return {
+                        ...post,
+                        likes: isLiked ? (post.likes || 1) - 1 : (post.likes || 0) + 1,
+                        likedBy: isLiked 
+                            ? likedBy.filter(id => id !== userId)
+                            : [...likedBy, userId]
+                    };
+                }
+                return post;
+            });
+            console.log('Updated posts:', newPosts);
+            return newPosts;
+        });
+    }, []);
 
     /**
      * Adds a comment to a post
@@ -288,45 +243,15 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         }));
     }, [updateCommentById]);
 
-    const toggleCommentRetweet = React.useCallback((postId: number, commentId: number, userId: number) => {
-        setPosts(prev => prev.map(post => {
-            if (post.id !== postId) return post;
-            const updatedComments = updateCommentById(post.comments, commentId, (c) => {
-                const isRetweeted = c.retweetedBy.includes(userId);
-                return {
-                    ...c,
-                    retweets: isRetweeted ? c.retweets - 1 : c.retweets + 1,
-                    retweetedBy: isRetweeted ? c.retweetedBy.filter(id => id !== userId) : [...c.retweetedBy, userId],
-                };
-            });
-            return { ...post, comments: updatedComments };
-        }));
-    }, [updateCommentById]);
-
-    const shareComment = React.useCallback((postId: number, commentId: number) => {
-        setPosts(prev => prev.map(post => {
-            if (post.id !== postId) return post;
-            const updatedComments = updateCommentById(post.comments, commentId, (c) => ({
-                ...c,
-                shares: c.shares + 1,
-            }));
-            return { ...post, comments: updatedComments };
-        }));
-    }, [updateCommentById]);
-
     // Context value object containing all state and actions
     const value: PostContextType = {
         posts,
         deletePost,
         addPost,
-        // toggleLike,
-        // toggleRetweet,
-        // sharePost,
+        toggleLike,
         addComment,
         addReply,
         toggleCommentLike,
-        toggleCommentRetweet,
-        shareComment,
     };
 
     return <PostContext.Provider value={value}>{children}</PostContext.Provider>;

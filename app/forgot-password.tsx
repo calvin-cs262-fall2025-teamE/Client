@@ -1,9 +1,9 @@
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 
 export default function ForgotPasswordScreen() {
@@ -62,39 +62,41 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: 24,
   },
   backButton: {
     position: 'absolute',
     top: 60,
     left: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     zIndex: 20,
+    borderRadius: 14,
   },
   heroGlow: {
     position: 'absolute',
-    top: 100,
+    top: 80,
     left: '50%',
-    marginLeft: -100,
-    width: 200,
-    height: 200,
-    borderRadius: 100,
-    opacity: 0.15,
+    marginLeft: -125,
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    opacity: 0.18,
     zIndex: -1,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontSize: 32,
+    fontWeight: '800',
+    marginBottom: 12,
     textAlign: 'center',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   subtitle: {
-    fontSize: 15,
-    marginBottom: 32,
+    fontSize: 16,
+    marginBottom: 36,
     textAlign: 'center',
-    lineHeight: 22,
+    lineHeight: 24,
+    opacity: 0.8,
   },
   formContainer: {
     width: '100%',
@@ -103,33 +105,35 @@ const styles = StyleSheet.create({
   label: {
     alignSelf: 'flex-start',
     marginLeft: '7.5%',
-    marginBottom: 8,
+    marginBottom: 10,
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   input: {
     width: '85%',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginBottom: 20,
+    borderRadius: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    marginBottom: 24,
     fontSize: 16,
   },
   button: {
     width: '85%',
-    paddingVertical: 14,
-    borderRadius: 12,
+    paddingVertical: 16,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
+    fontWeight: '800',
+    fontSize: 17,
+    letterSpacing: 0.5,
   },
 });

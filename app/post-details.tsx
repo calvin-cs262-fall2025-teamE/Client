@@ -36,21 +36,13 @@ export default function PostDetails() {
           </ScrollView>
 
                 {/* Bottom Navigation Bar */}
-                <View style={[styles.bottomNav, { backgroundColor: 'transparent', borderTopColor: theme.colors.border }]}>
+                <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
                   <TouchableOpacity 
                     style={styles.navItem} 
-                    onPress={() => router.push('/(tabs)/index')}
+                    onPress={() => router.navigate('/(tabs)')}
                   >
-                    <Ionicons name="compass-outline" size={28} color={theme.colors.textSecondary} />
+                        <Ionicons name="home-outline" size={28} color={theme.colors.textSecondary} />
                     <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity 
-                    style={styles.navItem}
-                    onPress={() => router.push('/(tabs)/search')}
-                  >
-                    <Ionicons name="search-outline" size={28} color={theme.colors.textSecondary} />
-                    <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Search</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity 
@@ -96,18 +88,26 @@ const styles = StyleSheet.create({
       justifyContent: 'space-around',
       alignItems: 'center',
       borderTopWidth: 1,
-      height: 85,
-      paddingBottom: 20,
-      paddingTop: 10,
-      backgroundColor: 'transparent',
+      height: 72,
+      paddingBottom: 8,
+      paddingTop: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 8,
     },
     navItem: {
         alignItems: 'center',
         justifyContent: 'center',
         gap: 4,
+        paddingHorizontal: 16,
+        paddingVertical: 6,
+        borderRadius: 16,
     },
     navLabel: {
         fontSize: 11,
-        fontWeight: '600',
+        fontWeight: '700',
+        letterSpacing: 0.3,
     },
 });

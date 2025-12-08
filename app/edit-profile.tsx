@@ -66,13 +66,13 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <LinearGradient
-        colors={theme.colors.background as [string, string, string]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.background}
-      >
+    <LinearGradient
+      colors={theme.colors.background as [string, string, string]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.background}
+    >
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="close" size={24} color={theme.colors.text} />
@@ -166,14 +166,15 @@ export default function EditProfileScreen() {
             </View>
           </View>
         </ScrollView>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   background: {
     flex: 1,
@@ -184,77 +185,101 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   backButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   saveButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
   },
   scrollContent: {
-    paddingBottom: 32,
+    paddingBottom: 40,
   },
   avatarSection: {
     alignItems: 'center',
-    paddingVertical: 24,
-    marginBottom: 16,
+    paddingVertical: 32,
+    marginBottom: 20,
   },
   avatarLarge: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 6,
   },
   avatarImage: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
   },
   changePhotoButton: {
-    marginTop: 12,
+    marginTop: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 2,
   },
   changePhotoText: {
     fontSize: 15,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   formSection: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    borderRadius: 20,
     marginHorizontal: 16,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   label: {
     fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
+    fontWeight: '700',
+    marginBottom: 10,
+    letterSpacing: 0.3,
   },
   input: {
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
   },
   textArea: {
-    height: 100,
-    paddingTop: 12,
+    height: 120,
+    paddingTop: 14,
   },
 });

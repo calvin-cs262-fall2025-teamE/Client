@@ -6,14 +6,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Alert,
     Dimensions,
     FlatList,
     Image,
     Platform,
     SafeAreaView,
     ScrollView,
-    Share,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -81,7 +79,7 @@ const POSTS = [
 
 export default function RVD() {
   const { theme } = useTheme();
-  const { posts, toggleLike, toggleRetweet, sharePost } = usePostContext();
+  const { posts, toggleLike } = usePostContext();
   const router = useRouter();
   
   // Filter posts for RVD community (communityId: 0) or show all if you prefer
@@ -90,30 +88,7 @@ export default function RVD() {
   // Simulated current user ID - replace with actual auth context when available
   const currentUserId = 1;
 
-  const handleLike = (postId: number) => {
-    console.log('Like clicked for post:', postId);
-    Alert.alert('Like Button', `Clicked like for post ${postId}`);
-    toggleLike(postId, currentUserId);
-  };
 
-  const handleRetweet = (postId: number) => {
-    console.log('Retweet clicked for post:', postId);
-    Alert.alert('Retweet Button', `Clicked retweet for post ${postId}`);
-    toggleRetweet(postId, currentUserId);
-  };
-
-  const handleShare = async (postId: number, postTitle: string) => {
-    console.log('Share clicked for post:', postId);
-    try {
-      await Share.share({
-        message: `Check out this post: ${postTitle}`,
-        title: postTitle,
-      });
-      sharePost(postId);
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
   
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
@@ -182,21 +157,13 @@ export default function RVD() {
         </TouchableOpacity>
 
         {/* Bottom Navigation Bar */}
-        <View style={[styles.bottomNav, { backgroundColor: 'transparent', borderTopColor: theme.colors.border }]}>
+        <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
           <TouchableOpacity 
             style={styles.navItem} 
-            onPress={() => router.push('/(tabs)/index')}
+            onPress={() => router.navigate('/(tabs)')}
           >
-            <Ionicons name="compass-outline" size={28} color={theme.colors.textSecondary} />
+              <Ionicons name="home-outline" size={28} color={theme.colors.textSecondary} />
             <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.navItem}
-            onPress={() => router.push('/(tabs)/search')}
-          >
-            <Ionicons name="search-outline" size={28} color={theme.colors.textSecondary} />
-            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Search</Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
@@ -235,25 +202,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   iconButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
   },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
+    opacity: 0.8,
   },
   storiesScroll: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -345,18 +320,18 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 22,
+    right: 24,
     bottom: 100,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
   },
   bottomNav: {
     position: 'absolute',
@@ -367,18 +342,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     borderTopWidth: 1,
-    height: 85,
-    paddingBottom: 20,
-    paddingTop: 10,
-    backgroundColor: 'transparent',
+    height: 72,
+    paddingBottom: 8,
+    paddingTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 8,
   },
   navItem: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
   navLabel: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

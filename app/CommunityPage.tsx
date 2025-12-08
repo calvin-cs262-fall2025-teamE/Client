@@ -6,14 +6,13 @@ import { Community, defaultCommunity } from "@/types/Community";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
-    Alert,
     Dimensions,
     FlatList,
     Platform,
     SafeAreaView,
-    Share,
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -43,10 +42,11 @@ const USERS = [
 
 export default function RVD() {
   // Steps to find the current context:
-  const { id } = useLocalSearchParams();
+  const { id, postId } = useLocalSearchParams();
   const { communities } = useCommunityContext();
   const router = useRouter();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const flatListRef = useRef<FlatList>(null);
 
   const selectedCommunity: Community = communities.find(comm => comm.communityID.toString() === id) || defaultCommunity;
   const { posts } = usePostContext();
@@ -58,6 +58,24 @@ export default function RVD() {
   // Simulated current user ID - replace with actual auth context when available
   const currentUserId = 1;
 
+  // Scroll to specific post if postId is provided
+  useEffect(() => {
+    if (postId && flatListRef.current && thesePosts.length > 0) {
+      const postIdNum = typeof postId === 'string' ? parseInt(postId, 10) : postId;
+      const targetIndex = thesePosts.findIndex((post) => post.id === postIdNum);
+      console.log('🔍 Scroll Debug:', { postId, postIdNum, targetIndex, totalPosts: thesePosts.length, postIds: thesePosts.map(p => p.id) });
+      if (targetIndex !== -1) {
+        // Use setTimeout to ensure layout is complete
+        setTimeout(() => {
+          console.log('📍 Attempting scroll to index:', targetIndex);
+          flatListRef.current?.scrollToIndex({ index: targetIndex, animated: false, viewPosition: 0.5 });
+        }, 500);
+      } else {
+        console.log('❌ Post not found in posts list');
+      }
+    }
+  }, [postId, thesePosts]);
+
   const handleCommunitySelect = (communityId: number) => {
     router.push({
       pathname: '/CommunityPage',
@@ -66,30 +84,7 @@ export default function RVD() {
     setDropdownOpen(false);
   };
 
-  const handleLike = (postId: number) => {
-    console.log('Like clicked for post:', postId);
-    Alert.alert('Like Button', `Clicked like for post ${postId}`);
-    // toggleLike(postId, currentUserId);
-  };
 
-  const handleRetweet = (postId: number) => {
-    console.log('Retweet clicked for post:', postId);
-    Alert.alert('Retweet Button', `Clicked retweet for post ${postId}`);
-    // toggleRetweet(postId, currentUserId);
-  };
-
-  const handleShare = async (postId: number, postTitle: string) => {
-    console.log('Share clicked for post:', postId);
-    try {
-      await Share.share({
-        message: `Check out this post: ${postTitle}`,
-        title: postTitle,
-      });
-      // sharePost(postId);
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
   
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
@@ -118,50 +113,59 @@ export default function RVD() {
 
         {/* Community Dropdown Menu */}
         {dropdownOpen && (
-          <View style={[styles.dropdownMenu, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-            {communities.map((community) => (
-              <TouchableOpacity
-                key={community.communityID}
-                onPress={() => handleCommunitySelect(community.communityID)}
-                style={[
-                  styles.dropdownItem,
-                  { 
-                    backgroundColor: selectedCommunity.communityID === community.communityID 
-                      ? `${theme.colors.primary}20` 
-                      : 'transparent',
-                    borderBottomColor: theme.colors.border
-                  }
-                ]}
-              >
-                <Ionicons 
-                  name="people" 
-                  size={20} 
-                  color={selectedCommunity.communityID === community.communityID 
-                    ? theme.colors.primary 
-                    : theme.colors.textSecondary
-                  } 
-                  style={{ marginRight: 12 }}
-                />
-                <View style={{ flex: 1 }}>
-                  <Text style={[
-                    styles.dropdownItemName,
-                    { 
-                      color: theme.colors.text,
-                      fontWeight: selectedCommunity.communityID === community.communityID ? '700' : '500'
-                    }
-                  ]}>
-                    {community.communityName}
-                  </Text>
-                  <Text style={[styles.dropdownItemDesc, { color: theme.colors.textSecondary }]}>
-                    {community.description}
-                  </Text>
-                </View>
-                {selectedCommunity.communityID === community.communityID && (
-                  <Ionicons name="checkmark-circle" size={22} color={theme.colors.primary} />
-                )}
-              </TouchableOpacity>
-            ))}
-          </View>
+          <>
+            <TouchableOpacity 
+              style={styles.dropdownBackdrop} 
+              activeOpacity={1} 
+              onPress={() => setDropdownOpen(false)}
+            />
+            <View style={[styles.dropdownMenu, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+              <ScrollView showsVerticalScrollIndicator={true} bounces={false}>
+                {communities.map((community) => (
+                  <TouchableOpacity
+                    key={community.communityID}
+                    onPress={() => handleCommunitySelect(community.communityID)}
+                    style={[
+                      styles.dropdownItem,
+                      { 
+                        backgroundColor: selectedCommunity.communityID === community.communityID 
+                          ? `${theme.colors.primary}20` 
+                          : 'transparent',
+                        borderBottomColor: theme.colors.border
+                      }
+                    ]}
+                  >
+                    <Ionicons 
+                      name="people" 
+                      size={20} 
+                      color={selectedCommunity.communityID === community.communityID 
+                        ? theme.colors.primary 
+                        : theme.colors.textSecondary
+                      } 
+                      style={{ marginRight: 12 }}
+                    />
+                    <View style={{ flex: 1 }}>
+                      <Text style={[
+                        styles.dropdownItemName,
+                        { 
+                          color: theme.colors.text,
+                          fontWeight: selectedCommunity.communityID === community.communityID ? '700' : '500'
+                        }
+                      ]}>
+                        {community.communityName}
+                      </Text>
+                      <Text style={[styles.dropdownItemDesc, { color: theme.colors.textSecondary }]}>
+                        {community.description}
+                      </Text>
+                    </View>
+                    {selectedCommunity.communityID === community.communityID && (
+                      <Ionicons name="checkmark-circle" size={22} color={theme.colors.primary} />
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </>
         )}
 
         {/* Feed */}
@@ -203,10 +207,17 @@ export default function RVD() {
 
         {/* Feed */}
         <FlatList
+          ref={flatListRef}
           data={thesePosts}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 140 }}
+          scrollEventThrottle={16}
+          getItemLayout={(data, index) => ({
+            length: 300, // Approximate height of each post card
+            offset: 300 * index,
+            index,
+          })}
           renderItem={({ item }) => (
             <PostCard post={item} currentUserId={currentUserId} />
           )}
@@ -222,41 +233,30 @@ export default function RVD() {
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
 
-        {/* Bottom Navigation Bar */}
-        <View style={[styles.bottomNav, { backgroundColor: 'transparent', borderTopColor: theme.colors.border }]}>
-          <TouchableOpacity 
-            style={styles.navItem} 
-            onPress={() => router.push('/(tabs)/index')}
-          >
-            <Ionicons name="compass-outline" size={28} color={theme.colors.textSecondary} />
-            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.navItem}
-            onPress={() => router.push('/(tabs)/search')}
-          >
-            <Ionicons name="search-outline" size={28} color={theme.colors.textSecondary} />
-            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Search</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.navItem}
-            onPress={() => router.push('/(tabs)/post')}
-          >
-            <Ionicons name="add-circle-outline" size={28} color={theme.colors.textSecondary} />
-            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Post</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.navItem}
-            onPress={() => router.push('/(tabs)/profile')}
-          >
-            <Ionicons name="person-outline" size={28} color={theme.colors.textSecondary} />
-            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
-          </TouchableOpacity>
-        </View>
       </LinearGradient>
+      <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}> 
+        <TouchableOpacity 
+          style={styles.navItem} 
+          onPress={() => router.navigate('/(tabs)')}
+        >
+          <Ionicons name="home-outline" size={28} color={theme.colors.textSecondary} />
+          <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={() => router.push('/(tabs)/post')}
+        >
+          <Ionicons name="add-circle-outline" size={28} color={theme.colors.textSecondary} />
+          <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Post</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.navItem}
+          onPress={() => router.push('/(tabs)/profile')}
+        >
+          <Ionicons name="person-outline" size={28} color={theme.colors.textSecondary} />
+          <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
@@ -276,43 +276,72 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   iconButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
   },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
+    opacity: 0.8,
+  },
+  dropdownBackdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 99,
   },
   dropdownMenu: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    position: 'absolute',
+    top: 90,
+    left: 0,
+    right: 0,
+    zIndex: 100,
+    borderBottomWidth: 1,
     maxHeight: 400,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    elevation: 10,
   },
   dropdownItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    paddingHorizontal: 20,
+    paddingVertical: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   dropdownItemName: {
     fontSize: 16,
-    marginBottom: 2,
+    marginBottom: 3,
+    letterSpacing: 0.2,
   },
   dropdownItemDesc: {
-    fontSize: 12,
+    fontSize: 13,
+    opacity: 0.7,
   },
   communityScroll: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -423,18 +452,18 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 22,
+    right: 24,
     bottom: 100,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
   },
   bottomNav: {
     position: 'absolute',
@@ -445,18 +474,26 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     borderTopWidth: 1,
-    height: 85,
-    paddingBottom: 20,
-    paddingTop: 10,
-    backgroundColor: 'transparent',
+    height: 72,
+    paddingBottom: 8,
+    paddingTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 8,
   },
   navItem: {
     alignItems: 'center',
     justifyContent: 'center',
     gap: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
   },
   navLabel: {
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

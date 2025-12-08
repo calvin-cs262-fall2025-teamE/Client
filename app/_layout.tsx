@@ -22,18 +22,19 @@ function RootNavigator() {
             },
             headerShadowVisible: false,
             headerBackTitleVisible: false,
+            headerBackTitle: '',
             animation: 'slide_from_right',
           }}
         >
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false, headerBackTitle: '' }} />
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="login" options={{ headerShown: false }} />
           <Stack.Screen name="create-account" options={{ headerShown: false }} />
           <Stack.Screen name="forgot-password" options={{ headerShown: false }} />
           <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
-          <Stack.Screen name="RVD" options={{ title: 'Community', headerShown: true }} />
-          <Stack.Screen name="post-details" options={{ title: 'Post', headerShown: true }} />
-          <Stack.Screen name="CommunityPage" options={{ title: 'Community', headerShown: true }} />
+          <Stack.Screen name="RVD" options={{ title: 'Community', headerShown: true, headerBackTitle: '' }} />
+          <Stack.Screen name="post-details" options={{ title: 'Post', headerShown: true, headerBackTitle: '' }} />
+          <Stack.Screen name="CommunityPage" options={{ title: 'Community', headerShown: true, headerBackTitle: '' }} />
         </Stack>
       </CommunityProvider>
     </AuthProvider>
