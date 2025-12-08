@@ -1,3 +1,4 @@
+import { useCommunityContext } from "@/context/CommunityContext";
 import { usePostContext } from "@/context/PostContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Comment, Post } from "@/types/Post";
@@ -14,8 +15,8 @@ interface PostCardProps {
 
 export default function PostCard({ post, currentUserId, isDetailView = false }: PostCardProps) {
   const { theme } = useTheme();
-  const { addComment, addReply, toggleCommentLike, toggleCommentRetweet, shareComment } = usePostContext();
-  // toggleLike, toggleRetweet, sharePost
+  const { addComment, addReply, toggleCommentLike, toggleLike } = usePostContext();
+  const { communities } = useCommunityContext();
   const router = useRouter();
   const [commenting, setCommenting] = useState(false);
   const [showComments, setShowComments] = useState(isDetailView);
@@ -24,25 +25,9 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
   const [replyText, setReplyText] = useState('');
   const [expandedReplies, setExpandedReplies] = useState<Set<number>>(new Set());
 
-  // const handleLike = () => {
-  //   toggleLike(post.id, currentUserId);
-  // };
-
-  // const handleRetweet = () => {
-  //   toggleRetweet(post.id, currentUserId);
-  // };
-
-  // const handleShare = async () => {
-  //   try {
-  //     await Share.share({
-  //       message: `Check out this post: ${post.title}`,
-  //       title: post.title,
-  //     });
-  //     sharePost(post.id);
-  //   } catch (error) {
-  //     console.error('Error sharing:', error);
-  //   }
-  // };
+  const handleLike = () => {
+    toggleLike(post.id, currentUserId);
+  };
 
   const handleComment = () => {
     setShowComments(!showComments);
@@ -117,29 +102,11 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.commentActionBtn} onPress={() => toggleCommentRetweet(post.id, comment.id, currentUserId)}>
-            <Ionicons name={comment.retweetedBy.includes(currentUserId) ? "repeat" : "repeat-outline"} size={16} color={comment.retweetedBy.includes(currentUserId) ? theme.colors.accent : theme.colors.textSecondary} />
-            {comment.retweets > 0 && (
-              <Text style={[styles.commentActionCount, { color: comment.retweetedBy.includes(currentUserId) ? theme.colors.accent : theme.colors.textSecondary }]}>
-                {comment.retweets}
-              </Text>
-            )}
-          </TouchableOpacity>
-
           <TouchableOpacity style={styles.commentActionBtn} onPress={() => toggleCommentLike(post.id, comment.id, currentUserId)}>
             <Ionicons name={comment.likedBy.includes(currentUserId) ? "heart" : "heart-outline"} size={16} color={comment.likedBy.includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary} />
             {comment.likes > 0 && (
               <Text style={[styles.commentActionCount, { color: comment.likedBy.includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary }]}>
                 {comment.likes}
-              </Text>
-            )}
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.commentActionBtn} onPress={() => shareComment(post.id, comment.id)}>
-            <Ionicons name="share-outline" size={16} color={theme.colors.textSecondary} />
-            {comment.shares > 0 && (
-              <Text style={[styles.commentActionCount, { color: theme.colors.textSecondary }]}>
-                {comment.shares}
               </Text>
             )}
           </TouchableOpacity>
@@ -188,6 +155,8 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
     );
   };
 
+  const community = communities.find((c) => c.communityID === post.communityId);
+
   return (
     <View style={[styles.postCard, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.border }]}>
       <View style={{ flex: 1 }}>
@@ -197,6 +166,8 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
             {new Date(post.timePosted).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </Text>
         </View>
+
+        {/* Community pill removed as requested */}
         
         <TouchableOpacity onPress={() => router.push({
           pathname: "./post-details",
@@ -222,49 +193,21 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
             )}
           </TouchableOpacity>
           
-          {/* <TouchableOpacity 
-            style={styles.actionBtn}
-            onPress={handleRetweet}
-          >
-            <Ionicons 
-              name={post.retweetedBy.includes(currentUserId) ? "repeat" : "repeat-outline"} 
-              size={20} 
-              color={post.retweetedBy.includes(currentUserId) ? theme.colors.accent : theme.colors.textSecondary} 
-            />
-            {post.retweets > 0 && (
-              <Text style={[styles.actionCount, { color: post.retweetedBy.includes(currentUserId) ? theme.colors.accent : theme.colors.textSecondary }]}>
-                {post.retweets}
-              </Text>
-            )}
-          </TouchableOpacity>
-          
           <TouchableOpacity 
             style={styles.actionBtn}
             onPress={handleLike}
           >
             <Ionicons 
-              name={post.likedBy.includes(currentUserId) ? "heart" : "heart-outline"} 
+              name={(post.likedBy || []).includes(currentUserId) ? "heart" : "heart-outline"} 
               size={20} 
-              color={post.likedBy.includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary} 
+              color={(post.likedBy || []).includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary} 
             />
-            {post.likes > 0 && (
-              <Text style={[styles.actionCount, { color: post.likedBy.includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary }]}>
+            {(post.likes || 0) > 0 && (
+              <Text style={[styles.actionCount, { color: (post.likedBy || []).includes(currentUserId) ? "#e74c3c" : theme.colors.textSecondary }]}>
                 {post.likes}
               </Text>
             )}
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.actionBtn}
-            onPress={handleShare}
-          >
-            <Ionicons name="share-outline" size={20} color={theme.colors.textSecondary} />
-            {post.shares > 0 && (
-              <Text style={[styles.actionCount, { color: theme.colors.textSecondary }]}>
-                {post.shares}
-              </Text>
-            )}
-          </TouchableOpacity> */}
         </View>
 
         {/* Display Comments Section - Only when showComments is true */}
@@ -325,69 +268,82 @@ const styles = StyleSheet.create({
   postCard: {
     flexDirection: 'row',
     marginBottom: 2,
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingVertical: 18,
+    paddingHorizontal: 18,
+    borderBottomWidth: 1,
   },
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 2,
+    marginBottom: 4,
   },
   postName: {
     fontWeight: '700',
-    fontSize: 15,
-    marginRight: 6,
+    fontSize: 16,
+    marginRight: 8,
   },
   postHandle: {
+  communityPill: {
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  communityPillText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
     fontSize: 13,
   },
   postText: {
-    fontSize: 15,
-    marginBottom: 6,
-    marginTop: 2,
-    lineHeight: 20,
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 4,
+    lineHeight: 22,
   },
   postActions: {
     flexDirection: 'row',
-    marginTop: 8,
+    marginTop: 10,
     marginBottom: 2,
-    gap: 24,
+    gap: 28,
   },
   actionBtn: {
     paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    minWidth: 40,
+    gap: 6,
+    minWidth: 44,
   },
   actionCount: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '600',
   },
   commentsSection: {
-    marginTop: 12,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
+    marginTop: 14,
+    paddingTop: 14,
+    borderTopWidth: 1,
   },
   commentsList: {
-    gap: 10,
-    marginBottom: 10,
+    gap: 12,
+    marginBottom: 12,
   },
   commentItem: {
-    paddingVertical: 6,
+    paddingVertical: 8,
     marginBottom: 8,
   },
   commentFooter: {
-    marginTop: 4,
-    marginBottom: 6,
+    marginTop: 6,
+    marginBottom: 8,
   },
   commentActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginTop: 4,
+    gap: 18,
+    marginTop: 6,
   },
   commentActionBtn: {
     flexDirection: 'row',

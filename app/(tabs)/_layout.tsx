@@ -1,7 +1,7 @@
 import { CommunityProvider } from '@/context/CommunityContext';
+import { useTheme } from '@/context/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
-import { useTheme } from '@/context/ThemeContext';
 
 
 export default function TabLayout() {
@@ -42,15 +42,13 @@ export default function TabLayout() {
           title: 'Home',
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-          <Ionicons name={focused ? 'compass' : 'compass-outline'} color={color} size={28} /> 
+          <Ionicons name={focused ? 'home' : 'home-outline'} color={color} size={28} /> 
           ), }}/>
 
         <Tabs.Screen name="search" options={{ 
-          title: 'Search',
+          href: null, // Hide from tab bar
           headerShown: false,
-          tabBarIcon: ({ color, focused }) => (
-          <Ionicons name={focused ? 'search' : 'search-outline'} color={color} size={28} /> 
-          ), }}/>
+        }}/>
 
         <Tabs.Screen name="post" options={{ 
           title: 'Post',
