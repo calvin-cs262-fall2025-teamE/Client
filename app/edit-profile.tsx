@@ -1,10 +1,11 @@
 import { useTheme } from '@/context/ThemeContext';
+import { commonStyles } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from './AuthContext';
 
@@ -18,6 +19,10 @@ export default function EditProfileScreen() {
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState(user?.phone || '');
   const [bio, setBio] = useState('');
+
+  //Logic for on-line help:
+  const [helpVisible, setHelpVisible] = useState(false);
+  
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -77,7 +82,12 @@ export default function EditProfileScreen() {
           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="close" size={24} color={theme.colors.text} />
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Edit Profile</Text>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+            Edit Profile
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="help-circle-outline" size={24} color={theme.colors.primary} onPress={() => setHelpVisible(true)}/>
+            </TouchableOpacity>
+          </Text>
           <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
             <Ionicons name="checkmark" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
@@ -166,6 +176,51 @@ export default function EditProfileScreen() {
             </View>
           </View>
         </ScrollView>
+
+        {/* On-line help popup */}
+        <Modal
+          visible={helpVisible}
+          onRequestClose={() => {
+            setHelpVisible(!helpVisible);
+        }}>
+          <View style={commonStyles.helpPage}>
+            <Text style={commonStyles.helpTitle}>Editing Your Profile</Text>
+            <Text style={commonStyles.helpText}>
+              Using this the edit profile page, you can change anything about your account
+            </Text>
+            <Text style={commonStyles.helpText}>
+              Simply enter a new value for a field and tab the <Ionicons name="checkmark" size={18} /> in the upper left corner to confirm the change. You can edit your: 
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Profile photo. Click the change photo button to upload an new photo
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - First name
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Last name
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Email address (must be a valid email)
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Phone number
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Password (you must enter the same password twice to confirm that you haven't mistyped)
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - Bio
+            </Text>
+            
+            <TouchableOpacity
+            style={[commonStyles.helpCloseButton, {backgroundColor: 'black'}]}
+            onPress={() => setHelpVisible(!helpVisible)}
+            >
+              <Text style={[commonStyles.buttonText, {fontSize: 20}]}>Hide Help</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -256,5 +311,9 @@ const styles = StyleSheet.create({
   textArea: {
     height: 100,
     paddingTop: 12,
+  },
+  iconButton: {
+    padding: 6,
+    borderRadius: 8,
   },
 });
