@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
@@ -52,8 +52,17 @@ export default function AboutScreen() {
   };
 
   const handleSignOut = () => {
-    signOut();
-    router.replace('/login');
+     Alert.alert('Alert', 'Are you sure you want to sign out?', [
+      {
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: async() => {
+        await signOut();
+        router.replace('/login');
+      }},
+    ]);
   };
   return (
     <LinearGradient
