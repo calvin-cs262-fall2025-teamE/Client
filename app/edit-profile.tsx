@@ -207,7 +207,7 @@ export default function EditProfileScreen() {
             - Phone number
             </Text>
             <Text style={commonStyles.helpText}>
-            - Password (you must enter the same password twice to confirm that you haven't mistyped)
+            - Password (you must enter the same password twice to confirm that you have not mistyped)
             </Text>
             <Text style={commonStyles.helpText}>
             - Bio
@@ -221,8 +221,8 @@ export default function EditProfileScreen() {
             </TouchableOpacity>
           </View>
         </Modal>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 

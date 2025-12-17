@@ -1,11 +1,12 @@
 import { useCommunityContext } from '@/context/CommunityContext';
 import { usePostContext } from '@/context/PostContext';
 import { useTheme } from '@/context/ThemeContext';
+import { commonStyles } from '@/styles/common';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useMemo, useState } from 'react';
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 export default function AboutScreen() {
@@ -273,8 +274,9 @@ export default function AboutScreen() {
             </TouchableOpacity>
           </View>
         </Modal>
-      </LinearGradient>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
+
   );
 }
 

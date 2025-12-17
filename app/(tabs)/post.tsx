@@ -436,7 +436,6 @@ export default function AboutScreen() {
             )}
           </View>
         </ScrollView>
-      </LinearGradient>
 
       {/* On-line help popup */}
       <Modal
@@ -478,7 +477,8 @@ export default function AboutScreen() {
           </TouchableOpacity>
         </View>
       </Modal>
-    </SafeAreaView>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
 
