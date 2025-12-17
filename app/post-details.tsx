@@ -1,15 +1,17 @@
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import PostCard from "@/components/PostCard";
 import { usePostContext } from "@/context/PostContext";
 import { useTheme } from "@/context/ThemeContext";
 import { Post, defaultPost } from "@/types/Post";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { SafeAreaView, ScrollView, StyleSheet } from "react-native";
+import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 export default function PostDetails() {
     const { id } = useLocalSearchParams();
+    const router = useRouter();
     const { posts } = usePostContext();
     const { theme } = useTheme();
 
@@ -20,18 +22,45 @@ export default function PostDetails() {
     const selectedPost: Post = posts.find(post => post.id.toString() === id) || defaultPost;
 
     return (
-        <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background[0] }]}>
-            <LinearGradient
-                colors={theme.colors.background}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.background}
-            >
-                <ScrollView 
-                    contentContainerStyle={styles.container}
-                >
-                    <PostCard post={selectedPost} currentUserId={currentUserId} isDetailView={true} />
-                </ScrollView>
+      <SafeAreaView style={styles.safeArea}>
+        <LinearGradient
+          colors={theme.colors.background}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.background}
+        >
+          <ScrollView 
+            contentContainerStyle={styles.container}
+          >
+            <PostCard post={selectedPost} currentUserId={currentUserId} isDetailView={true} />
+          </ScrollView>
+
+                {/* Bottom Navigation Bar */}
+                <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
+                  <TouchableOpacity 
+                    style={styles.navItem} 
+                    onPress={() => router.navigate('/(tabs)')}
+                  >
+                        <Ionicons name="home-outline" size={28} color={theme.colors.textSecondary} />
+                    <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={styles.navItem}
+                    onPress={() => router.push('/(tabs)/post')}
+                  >
+                    <Ionicons name="add-circle-outline" size={28} color={theme.colors.textSecondary} />
+                    <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Post</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity 
+                    style={styles.navItem}
+                    onPress={() => router.push('/(tabs)/profile')}
+                  >
+                    <Ionicons name="person-outline" size={28} color={theme.colors.textSecondary} />
+                    <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
+                  </TouchableOpacity>
+                </View>
             </LinearGradient>
         </SafeAreaView>
     );
@@ -42,11 +71,43 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     background: {
-        flex: 1,
-        width: "100%",
-        height: "100%",
+      flex: 1,
+      width: "100%",
+      height: "100%",
     },
     container: {
-        flexGrow: 1,
+      flexGrow: 1,
+      paddingBottom: 140,
+    },
+    bottomNav: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      borderTopWidth: 1,
+      height: 72,
+      paddingBottom: 8,
+      paddingTop: 8,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    navItem: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 4,
+        paddingHorizontal: 16,
+        paddingVertical: 6,
+        borderRadius: 16,
+    },
+    navLabel: {
+        fontSize: 11,
+        fontWeight: '700',
+        letterSpacing: 0.3,
     },
 });

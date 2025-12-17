@@ -70,7 +70,7 @@ export default function CreateAccountScreen() {
     >
       <SafeAreaView style={styles.container}>
         <TouchableOpacity onPress={() => router.back()} style={[styles.backButtonAbsolute, { backgroundColor: theme.colors.chip }]}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.textPrimary} />
+          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
 
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
@@ -82,15 +82,15 @@ export default function CreateAccountScreen() {
               style={styles.heroGlow}
               pointerEvents="none"
             />
-            <Text style={[styles.title, { color: theme.colors.textPrimary, textShadowColor: `${theme.colors.primary}40` }]}>Create Account</Text>
-            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Join the Calvin community today</Text>
+            <Text style={[styles.title, { color: theme.colors.text, textShadowColor: `${theme.colors.primary}40` }]}>Create Account</Text>
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Join Community today</Text>
           </View>
 
           <View style={[styles.card, { backgroundColor: theme.colors.surface, shadowColor: theme.colors.primary, borderColor: `${theme.colors.primary}20` }]}>
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>First Name</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>First Name</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="First Name"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={firstName}
@@ -100,9 +100,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Last Name</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Last Name</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="Last Name"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={lastName}
@@ -112,9 +112,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Email</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Email</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="you@example.com"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={email}
@@ -125,9 +125,9 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Email</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Confirm Email</Text>
               <TextInput
-                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                style={[styles.input, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                 placeholder="you@example.com"
                 placeholderTextColor={theme.colors.textSecondary}
                 value={confirmEmail}
@@ -138,10 +138,10 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Password</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Password</Text>
               <View style={styles.passwordRow}>
                 <TextInput
-                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                   placeholder="••••••••"
                   placeholderTextColor={theme.colors.textSecondary}
                   value={password}
@@ -162,10 +162,10 @@ export default function CreateAccountScreen() {
             </View>
 
             <View style={styles.formGroup}>
-              <Text style={[styles.label, { color: theme.colors.textPrimary }]}>Confirm Password</Text>
+              <Text style={[styles.label, { color: theme.colors.text }]}>Confirm Password</Text>
               <View style={styles.passwordRow}>
                 <TextInput
-                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: `${theme.colors.background}dd`, color: theme.colors.textPrimary }]}
+                  style={[styles.input, styles.passwordInput, { borderColor: theme.colors.border, backgroundColor: theme.colors.surfaceElev, color: theme.colors.text }]}
                   placeholder="••••••••"
                   placeholderTextColor={theme.colors.textSecondary}
                   value={confirmPassword}
@@ -220,52 +220,54 @@ const styles = StyleSheet.create({
   },
   heroGlow: {
     position: 'absolute',
-    top: -40,
+    top: -60,
     left: '50%',
-    marginLeft: -150,
-    width: 300,
-    height: 300,
+    marginLeft: -175,
+    width: 350,
+    height: 350,
     borderRadius: 999,
-    opacity: 0.4,
+    opacity: 0.5,
   },
   title: {
-    fontSize: 36,
+    fontSize: 38,
     fontWeight: '800',
-    letterSpacing: 1,
-    marginBottom: 8,
+    letterSpacing: 0.5,
+    marginBottom: 10,
     textAlign: 'center',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
+    textShadowRadius: 24,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 16,
     textAlign: 'center',
+    opacity: 0.8,
   },
   card: {
     width: '100%',
     maxWidth: CARD_MAX,
-    borderRadius: 20,
-    padding: 24,
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
+    borderRadius: 24,
+    padding: 28,
+    shadowOpacity: 0.18,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
     borderWidth: 1,
   },
   formGroup: {
-    marginBottom: 16,
+    marginBottom: 18,
   },
   label: {
     fontSize: 14,
-    marginBottom: 8,
-    fontWeight: '600',
+    marginBottom: 10,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
     fontSize: 16,
   },
   passwordRow: {
@@ -283,32 +285,39 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   button: {
-    marginTop: 8,
+    marginTop: 12,
     width: '100%',
-    paddingVertical: 15,
-    borderRadius: 12,
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
+    fontWeight: '800',
+    fontSize: 17,
+    letterSpacing: 0.5,
   },
   backButtonAbsolute: {
     position: 'absolute',
     top: 60,
     left: 20,
-    padding: 8,
+    padding: 10,
     zIndex: 20,
-    borderRadius: 8,
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   footerNote: {
-    marginTop: 16,
-    fontSize: 12,
+    marginTop: 20,
+    fontSize: 13,
     textAlign: 'center',
+    opacity: 0.7,
   },
 });

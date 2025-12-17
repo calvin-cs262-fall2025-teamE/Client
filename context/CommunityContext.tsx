@@ -36,7 +36,8 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     // Initialize items from imported JSON data
-    const [communities, setCommunities] = useState<Community[]>([{
+    const [communities, setCommunities] = useState<Community[]>([
+    {
         communityID: 0,
         communityName: "RVD",
         description: "The Rooks-Van Dellen Hall at Calvin University",
@@ -57,9 +58,45 @@ export const CommunityProvider: React.FC<{ children: ReactNode }> = ({
     {
         communityID: 3,
         communityName: "KE",
-        description: "The Knollcrest-East appartments at Calvin University",
+        description: "The Knollcrest-East apartments at Calvin University",
         location: "Calvin University Knollcrest Campus",
-    }
+    },
+    {
+        communityID: 4,
+        communityName: "CS 262",
+        description: "Software Engineering course discussion and help",
+        location: "Calvin University",
+    },
+    {
+        communityID: 5,
+        communityName: "Gaming Community",
+        description: "Connect with fellow gamers at Calvin",
+        location: "Calvin University",
+    },
+    {
+        communityID: 6,
+        communityName: "Campus Events",
+        description: "Stay updated on events happening around campus",
+        location: "Calvin University",
+    },
+    {
+        communityID: 7,
+        communityName: "Study Groups",
+        description: "Find study partners and form study groups",
+        location: "Calvin University",
+    },
+    {
+        communityID: 8,
+        communityName: "Book Club",
+        description: "Discuss books and share reading recommendations",
+        location: "Calvin University",
+    },
+    {
+        communityID: 9,
+        communityName: "Intramural Sports",
+        description: "Join intramural teams and find pickup games",
+        location: "Calvin University",
+    },
 ]); // Hard-coded default communities
 
     /**

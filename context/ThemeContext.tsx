@@ -3,7 +3,7 @@ import React, { createContext, ReactNode, useContext, useState } from 'react';
 export type ThemeMode = 'light' | 'dark';
 
 interface ThemeColors {
-  background: string[];
+  background: readonly [string, string, string];
   surface: string;
   surfaceElev: string;
   text: string;
@@ -41,22 +41,22 @@ interface ThemeContextType {
 
 const darkTheme: Theme = {
   colors: {
-    background: ["#000000", "#000000", "#000000"],
-    surface: "#000000",
-    surfaceElev: "#1a1a1a",
+    background: ["#0a0a0a", "#0f0f0f", "#121212"] as const,
+    surface: "#1a1a1a",
+    surfaceElev: "#242424",
     text: "#FFFFFF",
-    textSecondary: "#9CA3AF",
-    primary: "#FF9898",
-    accent: "#FF9176",
-    border: "#2a2a2a",
-    chip: "rgba(255,255,255,0.12)",
-    cardBackground: "#000000",
+    textSecondary: "#A0A0A0",
+    primary: "#FF8A80",
+    accent: "#FF6B6B",
+    border: "#333333",
+    chip: "rgba(255,255,255,0.08)",
+    cardBackground: "#1a1a1a",
   },
   radii: {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20,
+    xl: 24,
     pill: 999,
   },
   spacing: {
@@ -64,28 +64,28 @@ const darkTheme: Theme = {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20,
+    xl: 24,
   },
 };
 
 const lightTheme: Theme = {
   colors: {
-    background: ["#f8f9fa", "#ffffff", "#fefefe"],
+    background: ["#f5f7fa", "#ffffff", "#fafbfc"] as const,
     surface: "#ffffff",
-    surfaceElev: "#f1f3f5",
-    text: "#0f1419",
-    textSecondary: "#536471",
-    primary: "#FF9898",
-    accent: "#FF9176",
-    border: "#d1d5db",
-    chip: "rgba(0,0,0,0.06)",
+    surfaceElev: "#f0f2f5",
+    text: "#1a1a2e",
+    textSecondary: "#6b7280",
+    primary: "#e63946",
+    accent: "#ff6b6b",
+    border: "#e5e7eb",
+    chip: "rgba(0,0,0,0.04)",
     cardBackground: "#ffffff",
   },
   radii: {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20,
+    xl: 24,
     pill: 999,
   },
   spacing: {
@@ -93,7 +93,7 @@ const lightTheme: Theme = {
     sm: 8,
     md: 12,
     lg: 16,
-    xl: 20,
+    xl: 24,
   },
 };
 

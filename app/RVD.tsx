@@ -6,14 +6,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
 import {
-    Alert,
     Dimensions,
     FlatList,
     Image,
     Platform,
     SafeAreaView,
     ScrollView,
-    Share,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -81,7 +79,7 @@ const POSTS = [
 
 export default function RVD() {
   const { theme } = useTheme();
-  const { posts, toggleLike, toggleRetweet, sharePost } = usePostContext();
+  const { posts, toggleLike } = usePostContext();
   const router = useRouter();
   
   // Filter posts for RVD community (communityId: 0) or show all if you prefer
@@ -90,33 +88,10 @@ export default function RVD() {
   // Simulated current user ID - replace with actual auth context when available
   const currentUserId = 1;
 
-  const handleLike = (postId: number) => {
-    console.log('Like clicked for post:', postId);
-    Alert.alert('Like Button', `Clicked like for post ${postId}`);
-    toggleLike(postId, currentUserId);
-  };
 
-  const handleRetweet = (postId: number) => {
-    console.log('Retweet clicked for post:', postId);
-    Alert.alert('Retweet Button', `Clicked retweet for post ${postId}`);
-    toggleRetweet(postId, currentUserId);
-  };
-
-  const handleShare = async (postId: number, postTitle: string) => {
-    console.log('Share clicked for post:', postId);
-    try {
-      await Share.share({
-        message: `Check out this post: ${postTitle}`,
-        title: postTitle,
-      });
-      sharePost(postId);
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
   
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
       <LinearGradient
         colors={theme.colors.background}
         start={{ x: 0, y: 0 }}
@@ -163,7 +138,7 @@ export default function RVD() {
           data={rvdPosts}
           keyExtractor={item => item.id.toString()}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ paddingBottom: 90 }}
+          contentContainerStyle={{ paddingBottom: 140 }}
           renderItem={({ item }) => (
             <PostCard post={item} currentUserId={currentUserId} />
           )}
@@ -174,11 +149,39 @@ export default function RVD() {
           style={[styles.fab, { backgroundColor: theme.colors.primary }]} 
           activeOpacity={0.8}
           onPress={() => router.push({
-            pathname: "./(tabs)/post"
+            pathname: "./(tabs)/post",
+            params: { id: 0 }
           })}
         >
           <Ionicons name="create" size={28} color="#fff" />
         </TouchableOpacity>
+
+        {/* Bottom Navigation Bar */}
+        <View style={[styles.bottomNav, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
+          <TouchableOpacity 
+            style={styles.navItem} 
+            onPress={() => router.navigate('/(tabs)')}
+          >
+              <Ionicons name="home-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.navItem}
+            onPress={() => router.push('/(tabs)/post')}
+          >
+            <Ionicons name="add-circle-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Post</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={styles.navItem}
+            onPress={() => router.push('/(tabs)/profile')}
+          >
+            <Ionicons name="person-outline" size={28} color={theme.colors.textSecondary} />
+            <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
+          </TouchableOpacity>
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );
@@ -188,6 +191,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     paddingTop: Platform.OS === 'android' ? 32 : 0,
+    backgroundColor: 'transparent',
   },
   background: {
     flex: 1,
@@ -198,25 +202,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 12,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 14,
+    borderBottomWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 3,
   },
   iconButton: {
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
   },
   headerCenter: {
     flex: 1,
     alignItems: 'center',
-    gap: 2,
+    gap: 4,
   },
   headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
+    fontSize: 20,
+    fontWeight: '800',
+    letterSpacing: 0.3,
   },
   headerSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
+    opacity: 0.8,
   },
   storiesScroll: {
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -308,17 +320,48 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    right: 22,
-    bottom: 32,
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+    right: 24,
+    bottom: 100,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  bottomNav: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    height: 72,
+    paddingBottom: 8,
+    paddingTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.08,
     shadowRadius: 8,
-    elevation: 5,
+    elevation: 8,
+  },
+  navItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  navLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
 });

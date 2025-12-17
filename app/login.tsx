@@ -1,10 +1,10 @@
+import { useTheme } from '@/context/ThemeContext';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from './AuthContext';
 
 export default function SignInScreen() {
@@ -44,10 +44,6 @@ export default function SignInScreen() {
       style={styles.bg}
     >
       <SafeAreaView style={styles.container}>
-        <TouchableOpacity onPress={() => router.back()} style={[styles.backButtonAbsolute, { backgroundColor: theme.colors.chip }]}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
-        </TouchableOpacity>
-
         <View style={styles.hero}>
           <LinearGradient
             colors={[`${theme.colors.primary}40`, `${theme.colors.accent}30`, "transparent"]}
@@ -141,7 +137,7 @@ const styles = StyleSheet.create({
   },
   hero: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 28,
     position: 'relative',
   },
   heroGlow: {
@@ -152,46 +148,47 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 999,
-    opacity: 0.4,
+    opacity: 0.5,
   },
   brand: {
-    fontSize: 36,
-    fontWeight: '800',
-    letterSpacing: 1,
-    marginBottom: 8,
+    fontSize: 42,
+    fontWeight: '900',
+    letterSpacing: -0.5,
+    marginBottom: 10,
     textAlign: 'center',
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 20,
+    textShadowRadius: 24,
   },
   subtitle: {
-    fontSize: 15,
+    fontSize: 16,
     textAlign: 'center',
+    opacity: 0.85,
   },
   card: {
     width: '100%',
     maxWidth: CARD_MAX,
-    borderRadius: 20,
-    padding: 24,
-    shadowOpacity: 0.15,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 6,
+    borderRadius: 24,
+    padding: 28,
+    shadowOpacity: 0.12,
+    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 10 },
+    elevation: 8,
     borderWidth: 1,
   },
   formGroup: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   label: {
     fontSize: 14,
-    marginBottom: 8,
-    fontWeight: '600',
+    marginBottom: 10,
+    fontWeight: '700',
   },
   input: {
     width: '100%',
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 13,
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
     fontSize: 16,
   },
   passwordContainer: {
@@ -205,46 +202,56 @@ const styles = StyleSheet.create({
   },
   showBtn: {
     position: 'absolute',
-    right: 12,
-    padding: 8,
+    right: 14,
+    padding: 10,
   },
   button: {
-    marginTop: 8,
+    marginTop: 12,
     width: '100%',
-    paddingVertical: 15,
-    borderRadius: 12,
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: 'center',
-    shadowOpacity: 0.4,
-    shadowRadius: 12,
-    shadowOffset: { width: 0, height: 4 },
-    elevation: 4,
+    shadowOpacity: 0.45,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 6,
   },
   buttonDisabled: {
     opacity: 0.5,
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
+    fontWeight: '800',
+    fontSize: 17,
+    letterSpacing: 0.5,
   },
   linkBtn: {
-    marginTop: 12,
+    marginTop: 16,
     alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   linkText: {
-    fontWeight: '600',
+    fontWeight: '700',
+    fontSize: 15,
   },
   backButtonAbsolute: {
     position: 'absolute',
     top: 60,
     left: 20,
-    padding: 8,
+    padding: 10,
     zIndex: 20,
-    borderRadius: 8,
+    borderRadius: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
   },
   footerNote: {
-    marginTop: 16,
-    fontSize: 12,
+    marginTop: 20,
+    fontSize: 13,
     textAlign: 'center',
+    opacity: 0.7,
   },
 });
