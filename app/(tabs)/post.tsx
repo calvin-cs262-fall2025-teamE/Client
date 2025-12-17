@@ -1,6 +1,7 @@
 import { useCommunityContext } from '@/context/CommunityContext';
 import { usePostContext } from '@/context/PostContext';
 import { useTheme } from '@/context/ThemeContext';
+import { commonStyles } from '@/styles/common';
 import { Community } from '@/types/Community';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -56,7 +57,10 @@ export default function AboutScreen() {
 
   const { id } = useLocalSearchParams();
   const { communities } = useCommunityContext();
-  const [selectedCommunity, setSelectedCommunity] = useState<Community | undefined>(undefined);
+  const [selectedCommunity, setSelectedCommunity] = useState(communities.find(comm => comm.communityID.toString() === id));
+
+  //Logic for on-line help:
+  const [helpVisible, setHelpVisible] = useState(false);
 
   // Drafts key
   const DRAFTS_KEY = 'postDrafts';
@@ -199,7 +203,11 @@ export default function AboutScreen() {
       <SafeAreaView style={styles.container}>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.hero}>
-            <Text style={[styles.title, { color: theme.colors.text }]}>Create Post</Text>
+            <Text style={[styles.title, { color: theme.colors.text, justifyContent: 'center' }]}>Create Post
+              <TouchableOpacity style={styles.iconButton}>
+                <Ionicons name="help-circle-outline" size={24} color={theme.colors.primary} onPress={() => setHelpVisible(true)}/>
+              </TouchableOpacity>
+            </Text>
             <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>Share your question or advice</Text>
           </View>
 
@@ -428,8 +436,49 @@ export default function AboutScreen() {
             )}
           </View>
         </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+      </LinearGradient>
+
+      {/* On-line help popup */}
+      <Modal
+        visible={helpVisible}
+        onRequestClose={() => {
+          setHelpVisible(!helpVisible);
+      }}>
+        <View style={commonStyles.helpPage}>
+          <Text style={commonStyles.helpTitle}>The Post Page</Text>
+          <Text style={commonStyles.helpText}>
+            On this page you can make your own post
+          </Text>
+          <Text style={commonStyles.helpText}>
+            Let's say you wanted to share advice in the RVD community. You should:
+          </Text>
+          <Text style={commonStyles.helpText}>
+            1. Tap the button at the top of the page to bring up a selector for community.
+          </Text>
+          <Text style={commonStyles.helpText}>
+            2. Select RVD on the selector. You don't need to do this if the button already says 'Posting in RVD'.
+          </Text>
+          <Text style={commonStyles.helpText}>
+            3. Tap the 'Advice' button to switch to an advice type post.
+          </Text>
+          <Text style={commonStyles.helpText}>
+            4. Enter a consise statement of your advice in the upper text field.
+          </Text>
+          <Text style={commonStyles.helpText}>
+            5. If you have more information to add, or an image, use the fields below.
+          </Text>
+          <Text style={commonStyles.helpText}>
+            6. Tap the 'Post' button at the bottom of the page. You should see confirmation that this worked.
+          </Text>
+          <TouchableOpacity
+          style={[commonStyles.helpCloseButton, {backgroundColor: 'black'}]}
+          onPress={() => setHelpVisible(!helpVisible)}
+          >
+            <Text style={[commonStyles.buttonText, {fontSize: 20}]}>Hide Help</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 
@@ -621,5 +670,8 @@ const styles = StyleSheet.create({
   draftMeta: {
     fontStyle: 'italic',
     marginTop: 4,
+  },
+  iconButton: {
+    padding: 4,
   },
 });

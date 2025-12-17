@@ -40,6 +40,25 @@ export const commonStyles = StyleSheet.create({
         shadowOffset: { width: 0, height: 4 },
         elevation: 4,
     },
+    helpCloseButton: {
+        // Slightly modified from above for closing the help screen
+        padding: 16,
+        borderRadius: 5,
+        alignItems: 'center',
+        paddingVertical: 16,
+        marginTop: 8,
+        marginBottom: 20,
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 4 },
+        elevation: 4,
+        backgroundColor: 'black',
+
+        position: 'absolute',
+        right: 22,
+        bottom: 32,
+    },
     primaryButton: {
         backgroundColor: '#FF9898',
     },
@@ -68,5 +87,19 @@ export const commonStyles = StyleSheet.create({
         borderRadius: 12,
         fontSize: 16,
         minHeight: 50,
+    },
+    helpPage: {
+        flex: 1,
+        padding: 40,
+        marginTop: 35, 
+    },
+    helpText: {
+        fontSize: 20,
+        marginBottom: 10,
+    },
+    helpTitle: {
+        fontSize: 20,
+        marginBottom: 10,
+        fontWeight: '600',
     },
 });

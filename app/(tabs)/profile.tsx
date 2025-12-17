@@ -16,6 +16,9 @@ export default function AboutScreen() {
   const { communities } = useCommunityContext();
   const [activeTab, setActiveTab] = useState<'Posts' | 'Communities'>('Posts');
 
+  //Logic for on-line help:
+  const [helpVisible, setHelpVisible] = useState(false);
+  
   const userPosts = useMemo(() => {
     if (!user) return [];
     return posts.filter((p) => p.authorId === user.id);
@@ -60,7 +63,12 @@ export default function AboutScreen() {
     >
       <SafeAreaView style={styles.container}>
         <View style={styles.headerRow}>
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>Profile</Text>
+          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+            Profile
+            <TouchableOpacity style={styles.iconButton}>
+              <Ionicons name="help-circle-outline" size={24} color={theme.colors.primary} onPress={() => setHelpVisible(true)}/>
+            </TouchableOpacity>
+          </Text>
           <View style={styles.headerButtons}>
             <TouchableOpacity 
               activeOpacity={0.7} 
@@ -229,8 +237,44 @@ export default function AboutScreen() {
             </View>
           )}
         </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+
+        {/* On-line help popup */}
+        <Modal
+          visible={helpVisible}
+          onRequestClose={() => {
+            setHelpVisible(!helpVisible);
+        }}>
+          <View style={commonStyles.helpPage}>
+            <Text style={commonStyles.helpTitle}>Your Profile Page</Text>
+            <Text style={commonStyles.helpText}>
+              On this page you you can change any settings related to the app or your account. You can also see your previous posts and a list of your communities
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - To change anything about your profile, tap the 'edit profile' button
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - To see your communities, select the posts tab by tapping it
+            </Text>
+            <Text style={commonStyles.helpText}>
+            - To see your communities, select the communties tab by tapping it
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - To switch to {themeMode === 'dark' ? 'light' : 'dark'} mode, tap the <Ionicons name={themeMode === 'dark' ? 'sunny' : 'moon'} size={18} /> icon in the upper left corner
+            </Text>
+            <Text style={commonStyles.helpText}>
+              - To exit the app, tap the <Ionicons name="log-out-outline" size={18} /> icon in the upper left
+            </Text>
+            
+            <TouchableOpacity
+            style={[commonStyles.helpCloseButton, {backgroundColor: 'black'}]}
+            onPress={() => setHelpVisible(!helpVisible)}
+            >
+              <Text style={[commonStyles.buttonText, {fontSize: 20}]}>Hide Help</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
+      </LinearGradient>
+    </SafeAreaView>
   );
 }
 
@@ -261,8 +305,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   iconButton: {
-    padding: 10,
-    borderRadius: 12,
+    padding: 6,
+    borderRadius: 8,
   },
   signOutButton: {
     padding: 10,
