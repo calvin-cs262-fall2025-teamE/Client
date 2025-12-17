@@ -9,15 +9,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
-  Alert,
   Dimensions,
   FlatList,
-  Image,
   Modal,
   Platform,
   SafeAreaView,
   ScrollView,
-  Share,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -85,7 +82,7 @@ export default function RVD() {
   }, [postId, thesePosts]);
 
   const handleCommunitySelect = (communityId: number) => {
-    router.push({
+    router.replace({
       pathname: '/CommunityPage',
       params: { id: communityId }
     });
@@ -163,17 +160,14 @@ export default function RVD() {
           showsHorizontalScrollIndicator={false} 
           style={[styles.storiesScroll, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]} 
           contentContainerStyle={styles.storiesContainer}
-        >
+        />
           <View style={styles.storyAvatarWrapper}>
             <View style={[styles.storyAvatar, styles.addAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]}>
               <Ionicons name="add" size={28} color={theme.colors.primary} />
             </View>
             <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>Add</Text>
           </View>
-          {USERS.map((user) => (
-            <View style={styles.storyAvatarWrapper} key={user.handle}>
-              <Image source={user.avatar} style={[styles.storyAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]} />
-              <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>{user.name.split(" ")[0]}</Text>
+
         {/* Community Dropdown Menu */}
         {dropdownOpen && (
           <>
