@@ -6,19 +6,18 @@ import { commonStyles } from "@/styles/common";
 import { Community, defaultCommunity } from "@/types/Community";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Dimensions,
-  FlatList,
-  Modal,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
+    Dimensions,
+    FlatList,
+    Image,
+    Modal,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
@@ -51,9 +50,16 @@ export default function RVD() {
   const flatListRef = useRef<FlatList>(null);
 
   const selectedCommunity: Community = communities.find(comm => comm.communityID.toString() === id) || defaultCommunity;
-  const { posts } = usePostContext();
+  const { posts, loading, refreshPosts } = usePostContext();
 
   const thesePosts = posts.filter((post) => post.communityId.toString() === id)
+
+  // Refresh posts when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refreshPosts();
+    }, [refreshPosts])
+  );
 
   const { theme } = useTheme();
 
@@ -92,7 +98,7 @@ export default function RVD() {
 
   
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
+    <View style={[styles.safeArea, { backgroundColor: 'transparent' }]}> 
       <LinearGradient
         colors={theme.colors.background}
         start={{ x: 0, y: 0 }}
@@ -154,19 +160,6 @@ export default function RVD() {
           </View>
         </Modal>
 
-        {/* Horizontal Avatars */}
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
-          style={[styles.storiesScroll, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]} 
-          contentContainerStyle={styles.storiesContainer}
-        />
-          <View style={styles.storyAvatarWrapper}>
-            <View style={[styles.storyAvatar, styles.addAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]}>
-              <Ionicons name="add" size={28} color={theme.colors.primary} />
-            </View>
-            <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>Add</Text>
-          </View>
 
         {/* Community Dropdown Menu */}
         {dropdownOpen && (
@@ -262,7 +255,7 @@ export default function RVD() {
           )}
         /> */}
 
-        {/* Feed */}
+        {/* Feed - Instagram style, starts at top */}
         <FlatList
           ref={flatListRef}
           data={thesePosts}
@@ -270,11 +263,35 @@ export default function RVD() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 140 }}
           scrollEventThrottle={16}
-          getItemLayout={(data, index) => ({
-            length: 300, // Approximate height of each post card
-            offset: 300 * index,
-            index,
-          })}
+          ListHeaderComponent={
+            <View style={styles.storiesContainer}>
+              <View style={[styles.storiesScroll, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
+                <ScrollView 
+                  horizontal 
+                  showsHorizontalScrollIndicator={false} 
+                  contentContainerStyle={styles.storiesContent}
+                >
+                  <View style={styles.storyAvatarWrapper}>
+                    <View style={[styles.storyAvatar, styles.addAvatar, { borderColor: theme.colors.primary, backgroundColor: theme.colors.chip }]}>
+                      <Ionicons name="add" size={20} color={theme.colors.primary} />
+                    </View>
+                    <Text style={[styles.storyName, { color: theme.colors.textSecondary }]}>Add</Text>
+                  </View>
+                  {USERS.map((user) => (
+                    <View style={styles.storyAvatarWrapper} key={user.handle}>
+                      <Image 
+                        source={user.avatar} 
+                        style={[styles.storyAvatar, { borderColor: theme.colors.primary }]} 
+                      />
+                      <Text style={[styles.storyName, { color: theme.colors.textSecondary }]} numberOfLines={1}>
+                        {user.name.split(" ")[0]}
+                      </Text>
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            </View>
+          }
           renderItem={({ item }) => (
             <PostCard post={item} currentUserId={currentUserId} />
           )}
@@ -314,14 +331,13 @@ export default function RVD() {
           <Text style={[styles.navLabel, { color: theme.colors.textSecondary }]}>Profile</Text>
         </TouchableOpacity>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    paddingTop: Platform.OS === 'android' ? 32 : 0,
     backgroundColor: 'transparent',
   },
   background: {
@@ -333,15 +349,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 18,
-    paddingBottom: 14,
-    borderBottomWidth: 1,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 3,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    backgroundColor: 'transparent',
   },
   iconButton: {
     padding: 8,
@@ -388,7 +400,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 0,
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
   dropdownItemName: {
@@ -419,24 +431,28 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
-  storiesScroll: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingVertical: 10,
-  },
   storiesContainer: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+  },
+  storiesScroll: {
+    height: 85,
+    justifyContent: 'center',
+  },
+  storiesContent: {
     alignItems: 'center',
     paddingLeft: 12,
     paddingRight: 8,
+    paddingVertical: 8,
   },
   storyAvatarWrapper: {
     alignItems: 'center',
-    marginRight: 16,
-    width: 60,
+    marginRight: 12,
+    width: 56,
   },
   storyAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 2,
     marginBottom: 4,
   },
@@ -446,9 +462,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   storyName: {
-    fontSize: 12,
+    fontSize: 11,
     textAlign: 'center',
-    width: 60,
+    width: 56,
   },
   postCard: {
     flexDirection: 'row',

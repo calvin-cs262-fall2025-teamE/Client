@@ -6,7 +6,8 @@
  */
 
 import { Post } from "@/types/Post";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useEffect, useState } from "react";
+import { getAllPosts, createPost as createPostAPI, CreatePostPayload } from "@/api/posts";
 
 /**
  * This context type defines the shape of the context value that includes
@@ -18,8 +19,10 @@ import React, { createContext, ReactNode, useContext, useState } from "react";
  */
 interface PostContextType {
     posts: Post[]; // This will work in with out schema
+    loading: boolean; // Loading state for API calls
+    refreshPosts: () => Promise<void>; // Refresh posts from API
     deletePost: (id: number) => void;
-    addPost: (post: Omit<Post, 'id' | 'timePosted'>) => void;
+    addPost: (post: Omit<Post, 'id' | 'timePosted' | 'images'> & { images?: string[] }) => Promise<void>;
     toggleLike: (postId: number, userId: number) => void;
     addComment: (postId: number, authorId: number, text: string) => void;
     addReply: (postId: number, commentId: number, authorId: number, text: string) => void;
@@ -40,46 +43,9 @@ export const PostContext = createContext<PostContextType | undefined>(undefined)
 export const PostProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
-    // Initialize items as hard-coded for testing purposes
-    // When we get this from the data service we should order them by date
-    const [posts, setPosts] = useState<Post[]>([
-        {id: 1,
-        type: 'question',
-        title: 'Where\'s the best study spot?',
-        authorId: '0',
-        communityId: 0,
-        upvotes: 16,
-        timePosted: new Date(2024, 11, 5, 13, 12, 51, 234),
-        content: 'This is the default post',
-        comments: [],},
-        {id: 2,
-        type: 'question',
-        title: 'Is it true that there is a fire drill later today?',
-        authorId: '4',
-        communityId: 0,
-        upvotes: 2,
-        timePosted: new Date(),
-        content: 'My roommate said this, but I have no idea if it\'s true.',
-    comments: [],},
-        {id: 3,
-        type: 'question',
-        title: 'Have people had success making pound cake in these dorms?',
-        authorId: '6',
-        communityId: 2,
-        upvotes: 1,
-        timePosted: new Date(),
-        content: 'Was wondering if the dorm kitchens have served people well in the past',
-        comments: [],},
-        {id: 4,
-        type: 'advice',
-        title: 'Do not try to grow a tomato plant in the dorms',
-        authorId: '9',
-        communityId: 1,
-        upvotes: 5,
-        timePosted: new Date(2025, 9, 7, 4, 3, 24, 952),
-        content: 'I tried it and it died',
-        comments: [],},
-    ])
+    // Initialize posts from API - no hardcoded data
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
     // Global comment/reply ID sequence to avoid collisions across nested threads
     const [commentIdSeq, setCommentIdSeq] = useState<number>(1);
 
@@ -89,7 +55,25 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
         setCommentIdSeq(id);
         return id;
     }, [commentIdSeq]);
-    // Initialize items from imported JSON data
+
+    // Fetch posts from API on mount and when refresh is called
+    const refreshPosts = React.useCallback(async () => {
+        try {
+            setLoading(true);
+            const fetchedPosts = await getAllPosts();
+            setPosts(fetchedPosts);
+        } catch (error) {
+            console.error('Failed to fetch posts:', error);
+            // Keep existing posts on error
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    // Load posts on mount
+    useEffect(() => {
+        refreshPosts();
+    }, [refreshPosts]);
 
     /**
      * Removes an item from the list by filtering out the matching ID
@@ -101,19 +85,30 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
     }, []); // Empty dependency array - function doesn't depend on any props or state
 
     /**
-     * Adds a new post to the list
+     * Adds a new post via API and refreshes the list
      */
-    const addPost = React.useCallback((post: Omit<Post, 'id' | 'timePosted'>) => {
-        setPosts((prevPosts) => [
-            {
-                ...post,
-                id: Math.max(...prevPosts.map(p => p.id), 0) + 1,
-                timePosted: new Date(),
-                comments: [],
-            },
-            ...prevPosts,
-        ]);
-    }, []);
+    const addPost = React.useCallback(async (post: Omit<Post, 'id' | 'timePosted' | 'images'> & { images?: string[] }) => {
+        try {
+            // Prepare payload for API - MUST match backend exactly
+            const payload: CreatePostPayload = {
+                type: post.type as 'question' | 'advice',
+                title: post.title,
+                content: post.content,
+                authorId: Number(post.authorId), // Convert string to number for API
+                communityId: post.communityId,
+                images: post.images && post.images.length > 0 ? post.images : undefined, // Only send if images exist (pure base64)
+            };
+
+            // Create post via API - NO local state mutation
+            await createPostAPI(payload);
+
+            // MUST re-fetch from backend - never mutate local state
+            await refreshPosts();
+        } catch (error) {
+            console.error('Failed to create post:', error);
+            throw error; // Re-throw so UI can handle error
+        }
+    }, [refreshPosts]);
 
     /**
      * Toggles like status for a post by a specific user
@@ -246,6 +241,8 @@ export const PostProvider: React.FC<{ children: ReactNode }> = ({
     // Context value object containing all state and actions
     const value: PostContextType = {
         posts,
+        loading,
+        refreshPosts,
         deletePost,
         addPost,
         toggleLike,

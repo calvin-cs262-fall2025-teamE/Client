@@ -5,10 +5,11 @@ import { commonStyles } from '@/styles/common';
 import { Community } from '@/types/Community';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as ImagePicker from 'expo-image-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../AuthContext';
 
 interface buttonProps {
@@ -51,6 +52,8 @@ export default function AboutScreen() {
   const [detailsText, setDetailsText] = useState('');
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [drafts, setDrafts] = useState<any[]>([]);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]); // Array of base64 image strings
+  const [isPosting, setIsPosting] = useState(false);
 
   // Contextual information:
   const { user } = useAuth();
@@ -137,6 +140,60 @@ export default function AboutScreen() {
     }
   }, [id, communities]);
 
+  // Request image permission
+  const requestImagePermission = async (): Promise<boolean> => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission needed',
+        'We need camera roll permissions to select images.'
+      );
+      return false;
+    }
+    return true;
+  };
+
+  // Pick images from gallery - returns PURE base64 only
+  const pickImages = async () => {
+    const ok = await requestImagePermission();
+    if (!ok) return;
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: true,
+        base64: true, // Get base64 directly from ImagePicker
+        quality: 0.6, // Lower quality to reduce payload size
+      });
+
+      if (!result.canceled && result.assets) {
+        // Store PURE base64 images - strip data URL prefix if present
+        const cleaned = result.assets
+          .slice(0, 5) // Limit to 5 total
+          .filter(asset => asset.base64) // Only include images with base64
+          .map(asset => {
+            // Remove data URL prefix (data:image/jpeg;base64,) if present
+            const base64 = asset.base64!;
+            return base64.replace(/^data:image\/\w+;base64,/, '');
+          });
+        
+        if (selectedImages.length + cleaned.length > 5) {
+          Alert.alert('Limit reached', 'You can select up to 5 images.');
+          return;
+        }
+        setSelectedImages([...selectedImages, ...cleaned]);
+      }
+    } catch (error) {
+      console.error('Error picking images:', error);
+      Alert.alert('Error', 'Failed to pick images.');
+    }
+  };
+
+  // Remove image from selection
+  const removeImage = (index: number) => {
+    setSelectedImages(selectedImages.filter((_, i) => i !== index));
+  };
+
   const handlePost = async () => {
     // Validate inputs
     if (!questionText.trim()) {
@@ -149,35 +206,54 @@ export default function AboutScreen() {
       return;
     }
 
-    // Create the post
-    addPost({
-      type: currentSelected === 0 ? 'question' : 'advice',
-      title: questionText.trim(),
-      content: detailsText.trim() || questionText.trim(),
-      authorId: user!.id,
-      communityId: selectedCommunity.communityID,
-      upvotes: 0,
-      likes: 0,
-      retweets: 0,
-      shares: 0,
-      likedBy: [],
-      retweetedBy: [],
-      comments: [],
-    });
+    setIsPosting(true);
+    try {
+      // Create the post via API (images are pure base64, no data URL prefix)
+      await addPost({
+        type: currentSelected === 0 ? 'question' : 'advice',
+        title: questionText.trim(),
+        content: detailsText.trim() || questionText.trim(),
+        authorId: user!.id,
+        communityId: selectedCommunity.communityID,
+        upvotes: 0,
+        likes: 0,
+        retweets: 0,
+        shares: 0,
+        likedBy: [],
+        retweetedBy: [],
+        comments: [],
+        images: selectedImages.length > 0 ? selectedImages : undefined,
+      });
 
-    // Clear form
-    setQuestionText('');
-    setDetailsText('');
-    setCurrentSelected(0);
-    setSelectedCommunity(undefined);
+      // Clear form
+      setQuestionText('');
+      setDetailsText('');
+      setCurrentSelected(0);
+      setSelectedCommunity(undefined);
+      setSelectedImages([]);
 
-    // Show success and navigate
-    Alert.alert('Success!', 'Your post has been created', [
-      {
-        text: 'OK',
-        onPress: () => router.back(),
-      },
-    ]);
+      // Show success and navigate
+      Alert.alert('Success!', 'Your post has been created', [
+        {
+          text: 'OK',
+          onPress: () => router.back(),
+        },
+      ]);
+    } catch (err: any) {
+      // Fail loudly - log detailed error for debugging
+      console.error('POST FAILED:', err?.response?.data || err?.message || err);
+      console.error('Full error object:', err);
+      console.error('Response status:', err?.response?.status);
+      console.error('Response data:', err?.response?.data);
+      
+      const errorMessage = err?.response?.data?.message || err?.message || 'Unknown error';
+      Alert.alert(
+        'Upload failed', 
+        `Failed to create post. Check backend logs.\n\nError: ${errorMessage}`
+      );
+    } finally {
+      setIsPosting(false);
+    }
   };
 
   const handleDelete = () => {
@@ -185,6 +261,7 @@ export default function AboutScreen() {
     setDetailsText('');
     setSelectedCommunity(undefined);
     setCurrentSelected(0);
+    setSelectedImages([]);
     Alert.alert('Cleared', 'Your current post has been cleared.');
   };
 
@@ -350,6 +427,51 @@ export default function AboutScreen() {
             />
           </View>
 
+          {/* Image Picker Section */}
+          <View style={styles.section}>
+            <Text style={[styles.label, { color: theme.colors.text }]}>Images (Optional)</Text>
+            <TouchableOpacity
+              style={[styles.imagePickerButton, { 
+                backgroundColor: theme.colors.surfaceElev, 
+                borderColor: theme.colors.border 
+              }]}
+              onPress={pickImages}
+              disabled={selectedImages.length >= 5}
+            >
+              <Ionicons name="image-outline" size={20} color={theme.colors.primary} />
+              <Text style={[styles.imagePickerText, { color: theme.colors.text }]}>
+                {selectedImages.length >= 5 
+                  ? 'Maximum 5 images' 
+                  : `Add Images (${selectedImages.length}/5)`}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Image Preview Thumbnails */}
+            {selectedImages.length > 0 && (
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false}
+                style={styles.imagePreviewContainer}
+                contentContainerStyle={styles.imagePreviewContent}
+              >
+                {selectedImages.map((base64, index) => (
+                  <View key={index} style={styles.imagePreviewWrapper}>
+                    <Image 
+                      source={{ uri: `data:image/jpeg;base64,${base64}` }} 
+                      style={styles.imagePreview} 
+                    />
+                    <TouchableOpacity
+                      style={[styles.removeImageButton, { backgroundColor: theme.colors.surface }]}
+                      onPress={() => removeImage(index)}
+                    >
+                      <Ionicons name="close-circle" size={24} color="#e74c3c" />
+                    </TouchableOpacity>
+                  </View>
+                ))}
+              </ScrollView>
+            )}
+          </View>
+
           <View style={[styles.button_container, { marginBottom: 20 }]}>
             <TouchableOpacity
               style={[styles.action_button, { backgroundColor: theme.colors.surfaceElev, borderColor: theme.colors.border }]}
@@ -370,9 +492,10 @@ export default function AboutScreen() {
           <TouchableOpacity 
             style={[styles.post_button, { backgroundColor: theme.colors.primary}]}
             onPress={handlePost}
+            disabled={isPosting}
           >
             <Ionicons name="send" size={20} color="white" style={{ marginRight: 8 }} />
-            <Text style={styles.button_text}>Post</Text>
+            <Text style={styles.button_text}>{isPosting ? 'Posting...' : 'Post'}</Text>
           </TouchableOpacity>
 
           {/* Saved Drafts Section */}
@@ -673,5 +796,47 @@ const styles = StyleSheet.create({
   },
   iconButton: {
     padding: 4,
+  },
+  imagePickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    gap: 10,
+  },
+  imagePickerText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  imagePreviewContainer: {
+    marginTop: 12,
+  },
+  imagePreviewContent: {
+    gap: 12,
+    paddingRight: 4,
+  },
+  imagePreviewWrapper: {
+    position: 'relative',
+    width: 100,
+    height: 100,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
+  },
+  imagePreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  removeImageButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    borderRadius: 12,
+    padding: 2,
   },
 });

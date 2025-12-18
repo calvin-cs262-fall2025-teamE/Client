@@ -28,6 +28,7 @@ export interface Post {
     likedBy?: number[], // Array of user IDs who liked this post
     retweetedBy?: number[], // Array of user IDs who retweeted this post
     comments: Comment[], // Array of comments on this post
+    images?: string[], // Array of image URLs (optional, backward compatible)
 }
 
 export const defaultPost: Post = {

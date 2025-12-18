@@ -5,7 +5,9 @@ import { Comment, Post } from "@/types/Post";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+
+const windowWidth = Dimensions.get("window").width;
 
 interface PostCardProps {
   post: Post;
@@ -71,18 +73,21 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
     const hasReplies = comment.replies && comment.replies.length > 0;
 
     return (
-      <View key={comment.id} style={[styles.commentItem, depth > 0 && { marginLeft: 20, paddingLeft: 12, borderLeftWidth: 2, borderLeftColor: theme.colors.border }]}>
-        <Text style={[styles.commentAuthor, { color: theme.colors.text }]}>
-          User {comment.authorId}
-        </Text>
-        <Text style={[styles.commentText, { color: theme.colors.text }]}>
-          {comment.text}
-        </Text>
-        <View style={styles.commentFooter}>
+      <View key={comment.id} style={[
+        styles.commentItem, 
+        depth > 0 && [styles.commentReply, { borderLeftColor: theme.colors.border }]
+      ]}>
+        <View style={styles.commentHeader}>
+          <Text style={[styles.commentAuthor, { color: theme.colors.text }]}>
+            User {comment.authorId}
+          </Text>
           <Text style={[styles.commentTime, { color: theme.colors.textSecondary }]}>
             {new Date(comment.timePosted).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </Text>
         </View>
+        <Text style={[styles.commentText, { color: theme.colors.text }]}>
+          {comment.text}
+        </Text>
 
         {/* Comment action buttons */}
         <View style={styles.commentActions}>
@@ -158,7 +163,7 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
   const community = communities.find((c) => c.communityID === post.communityId);
 
   return (
-    <View style={[styles.postCard, { backgroundColor: theme.colors.background, borderBottomColor: theme.colors.border }]}>
+    <View style={[styles.postCard, { borderBottomColor: theme.colors.border }]}>
       <View style={{ flex: 1 }}>
         <View style={styles.postHeader}>
           <Text style={[styles.postName, { color: theme.colors.text }]}>User {post.authorId}</Text>
@@ -174,7 +179,43 @@ export default function PostCard({ post, currentUserId, isDetailView = false }: 
           params: { id: post.id }
         })}>
           <Text style={[styles.postText, { color: theme.colors.text }]}>{post.title}</Text>
+          {post.content && post.content !== post.title && (
+            <Text style={[styles.postContent, { color: theme.colors.text }]}>{post.content}</Text>
+          )}
         </TouchableOpacity>
+
+        {/* Images Section - Instagram style (below text, above actions) */}
+        {post.images && post.images.length > 0 && (
+          <View style={styles.imagesContainer}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.imagesScrollContent}
+              pagingEnabled
+              snapToInterval={windowWidth}
+              decelerationRate="fast"
+            >
+              {post.images.map((imageUrl, index) => (
+                <Image
+                  key={index}
+                  source={{ uri: imageUrl }}
+                  style={styles.postImage}
+                  resizeMode="cover"
+                />
+              ))}
+            </ScrollView>
+            {post.images.length > 1 && (
+              <View style={styles.imageIndicator}>
+                {post.images.map((_, index) => (
+                  <View 
+                    key={index} 
+                    style={[styles.imageDot, { backgroundColor: theme.colors.textSecondary }]} 
+                  />
+                ))}
+              </View>
+            )}
+          </View>
+        )}
         
         <View style={styles.postActions}>
           <TouchableOpacity 
@@ -283,26 +324,20 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   postHandle: {
-  communityPill: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderRadius: 16,
-    borderWidth: 1,
-  },
-  communityPillText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
     fontSize: 13,
   },
   postText: {
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 15,
+    marginBottom: 4,
     marginTop: 4,
-    lineHeight: 22,
+    lineHeight: 20,
+    fontWeight: '500',
+  },
+  postContent: {
+    fontSize: 15,
+    marginTop: 6,
+    marginBottom: 8,
+    lineHeight: 20,
   },
   postActions: {
     flexDirection: 'row',
@@ -404,5 +439,45 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  imagesContainer: {
+    marginVertical: 8,
+    marginHorizontal: -18, // Extend to card edges
+  },
+  imagesScrollContent: {
+    paddingHorizontal: 0,
+  },
+  postImage: {
+    width: windowWidth,
+    height: windowWidth, // Square images
+    backgroundColor: '#f0f0f0',
+  },
+  imageIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    position: 'absolute',
+    bottom: 8,
+    left: 0,
+    right: 0,
+  },
+  imageDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.5,
+  },
+  commentReply: {
+    marginLeft: 24,
+    paddingLeft: 16,
+    borderLeftWidth: 2,
+  },
+  commentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 4,
   },
 });
